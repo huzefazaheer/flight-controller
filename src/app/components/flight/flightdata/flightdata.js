@@ -5,7 +5,7 @@ export default function FlightData(){
         <div className={styles.flightdata}>
             <div className={styles.maindataholder}>
             <Data col={"#F179C3"} title={"Alt (m)"} data={"0.00"}></Data>
-            <Data col={"#FF990A"} title={"G Speed (km/h"} data={"0.00"}></Data>
+            <Data col={"#FF990A"} title={"G Speed (km/h)"} data={"0.00"}></Data>
             <Data col={"#FF4747"} title={"DistToWp (m)"} data={"0.00"}></Data>
             <Data col={"#EBFF0A"} title={"V Speed (km/h)"} data={"0.00"}></Data>
             <Data col={"#5ECFFF"} title={"DistToMav"} data={"0.00"}></Data>

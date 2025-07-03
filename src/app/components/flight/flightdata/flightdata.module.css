@@ -6,7 +6,7 @@
 .maindataholder{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    column-gap: 40px;
+    column-gap: 6%;
 }
 
 .maindata{
@@ -31,7 +31,7 @@
 }
 
 .pos{
-    margin-left: 10%;
+    margin-left: 6%;
 }
 
 .pos h3{

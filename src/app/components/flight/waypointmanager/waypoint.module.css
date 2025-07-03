@@ -4,17 +4,11 @@
 }
 
 .waypoint table{
+    /* display: block !important; */
+    max-height: 350px;
     width: 100%;
-    border-collapse: separate;
-    white-space: normal;
-    line-height: normal;
-    font-weight: normal;
-    font-size: medium;
-    font-style: normal;
-    color: -internal-quirk-inherit;
-    text-align: start;
     border-spacing: 0px!important;
-    font-variant: normal;  
+    overflow-y: auto;
 }
 
 .waypoint th{
@@ -41,10 +35,17 @@
 }
 
 .btn{
+    margin-top: 20%;
     background-color: white;
     color: black;
     border: none;
     padding: 10px 20px;
-    margin-top: 20%;
     width: 100%;
+}
+
+.tablewrapper{
+    display: block;
+    height: 350px;
+    max-height: 350px;
+    overflow-y: auto;
 }

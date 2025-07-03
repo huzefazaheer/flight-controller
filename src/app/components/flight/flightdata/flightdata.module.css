@@ -1,0 +1,35 @@
+.flightdata{
+    padding: 10% 0px;
+}
+
+
+.maindataholder{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 40px;
+}
+
+.maindata{
+    text-align: center;
+}
+
+.dataheading{
+    margin-bottom: 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.653);
+}
+
+.datatxt{
+    font-size: 40px;
+    margin: 0;
+    font-weight: 300;
+}
+
+.alttxt{
+    margin: 0;
+    color: #7CFFCF;
+}
+
+.pos{
+    margin-left: 10%;
+}

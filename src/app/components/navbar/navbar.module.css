@@ -1,0 +1,41 @@
+.navbar{
+    background-color: #424242;
+    padding: 0 2%;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.logo{
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.right{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: auto;
+    width: 15%;
+    justify-content: space-between;
+}
+
+.left p, .right p{
+    margin: 0;
+}
+
+.status{
+    margin-left: 5%;
+    display: flex;
+    align-items: center;
+}
+
+.statustxt{
+    position: relative;
+    right: 45%;
+    top:0%
+}

@@ -3,6 +3,9 @@ import styles from "./page.module.css";
 
 export default function Home() {
   return (
-   <div>Hello World</div>
+   <div className={styles.screen}>
+    <img className={styles.bigscreen} src="/live-map.png" alt="" />
+    <img className={styles.smallscreen} src="/live-feed.webp" alt="" />
+   </div>
   );
 }

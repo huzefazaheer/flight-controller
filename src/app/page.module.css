@@ -45,4 +45,19 @@
   height: 100%;
   object-fit: cover;
 }
+
+.controls{
+  position: relative;
+  bottom: 100%;
+  left: 0%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10%;
+  align-items: center;
+}
+
+.controls img{
+  width: 24px;
+  height: 24px;
+}
 /* poisition and vw vs % */

@@ -29,14 +29,18 @@ export default function WaypointManager(){
             <h3>Current Waypoints</h3>
             <div className={styles.tablewrapper}>
                  <table>
-                <tr>
+                <thead>
+                    <tr>
                 <th>ID</th>
                 <th>Lat</th>
                 <th>Long</th>
                 <th>Alt</th>
                 </tr>
-                {tabledata}
-            </table>
+                </thead>
+                <tbody>
+                    {tabledata}
+                </tbody>
+                </table>
             </div>
             <button className={styles.btn} onClick={() => setModalToggle(getToggleModal())}>Add New Waypoint</button>
         </div>
@@ -47,25 +51,22 @@ export default function WaypointManager(){
 
 function Modal({toggleModal, setModalToggle, waypoints, setWaypoints}){
 
-    const [waypoint, setWaypoint] = useState({});
-    const [wpId, setWpId] = useState(0);
-
-    function getToggleModal(){
-        if(toggleModal) return false;
-        else return true;
-    }
+    const [wpId, setWpId] = useState(1);
+    const [waypoint, setWaypoint] = useState({id:wpId});
 
     return(
-        <div className={`${styles.modal} ${toggleModal ? styles.hidden : ''}`}>
+        <div className={`${styles.modal} ${!toggleModal ? styles.hidden : ''}`}>
             <div className={styles.innermodal}>
                 <div className={styles.input}><label>Latitude</label><input type="text" value={waypoint.lat} onChange={(e) => {setWaypoint({...waypoint, lat:e.target.value})}}></input></div>
                 <div className={styles.input}><label>Longitude</label><input type="text" value={waypoint.long}  onChange={(e) => {setWaypoint({...waypoint, long:e.target.value})}}></input></div>
                 <div className={styles.input}><label>Altitude</label><input type="text" value={waypoint.alt}  onChange={(e) => {setWaypoint({...waypoint, alt:e.target.value})}}></input></div>
                 <button className={styles.btn} onClick={(e) => {
-                setWaypoint({...waypoint, id:wpId})
-                setWpId(wpId + 1)
+                console.log(wpId)
                 setWaypoints([...waypoints, waypoint])
-                setModalToggle(getToggleModal())}
+                setModalToggle(!toggleModal)
+                setWpId(wpId + 1)
+                setWaypoint({...waypoint, id:wpId + 1})
+                }
             }>Add New Waypoint</button>
             </div>
         </div>

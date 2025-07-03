@@ -55,8 +55,8 @@
     bottom: 0px;
     right: 0;
     width: 365px;
-    height: 200px;
-    max-height: 200px;
+    height: 300px;
+    max-height: 300px;
     background-color: cadetblue;
 }
 
@@ -74,5 +74,15 @@
 }
 
 .input{
-    margin-top: 6px;
+    margin-top: 3px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input label{
+    margin-right: 20px;
+}
+
+.innermodal .btn{
+    margin-top: 30%;
 }

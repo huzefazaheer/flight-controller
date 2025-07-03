@@ -7,7 +7,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "CSN -- Drone Controller",
+  title: "CSN - Drone Controller",
   description: "Drone controller webapp, made by CSN Team",
 };
 

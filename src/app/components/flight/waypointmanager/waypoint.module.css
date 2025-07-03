@@ -49,3 +49,16 @@
     max-height: 350px;
     overflow-y: auto;
 }
+
+.modal{
+    position: absolute;
+    bottom: 0px;
+    right: 0;
+    width: 365px;
+    height: 200px;
+    background-color: cadetblue;
+}
+
+.hidden{
+    display: none;
+}

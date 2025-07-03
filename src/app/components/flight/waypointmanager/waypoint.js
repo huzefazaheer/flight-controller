@@ -3,8 +3,15 @@ import styles from "./waypoint.module.css"
 
 export default function WaypointManager(){
 
+    const [toggleModal, setModalToggle] = useState(false);
+
     const [waypoints, setWaypoints] = useState([]);
     const [wpId, setWpId] = useState(0);
+
+    function getToggleModal(){
+        if(toggleModal) return false;
+        else return true;
+    }
 
     const tabledata = waypoints.map(wp => {
         return(
@@ -18,6 +25,7 @@ export default function WaypointManager(){
     })
 
     return(
+        <>
         <div className={styles.waypoint}>
             <h3>Current Waypoints</h3>
             <div className={styles.tablewrapper}>
@@ -29,27 +37,29 @@ export default function WaypointManager(){
                 <th>Alt</th>
                 </tr>
                 {tabledata}
-                {/* <tr>
-                    <td>1</td>
-                    <td>5.272838</td>
-                    <td>6.3163127</td>
-                    <td>100</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>5.233000</td>
-                    <td>5.3103666</td>
-                    <td>400</td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>6.653321</td>
-                    <td>7.3553167</td>
-                    <td>129</td>
-                </tr> */}
             </table>
             </div>
-            <button className={styles.btn} onClick={(e) => {setWaypoints([...waypoints, {id:4, lat:5.223132, long:4.555321, alt: 55}])}}>Add New Waypoint</button>
+            <button className={styles.btn} onClick={() => setModalToggle(getToggleModal())}>Add New Waypoint</button>
         </div>
+        <Modal toggleModal={toggleModal} setModalToggle={setModalToggle} waypoints={waypoints} setWaypoints={setWaypoints}></Modal>
+        </>
     )
+}
+
+function Modal({toggleModal, setModalToggle, waypoints, setWaypoints}){
+
+    function getToggleModal(){
+        if(toggleModal) return false;
+        else return true;
+    }
+
+    return(
+        <div className={`${styles.modal} ${toggleModal ? styles.hidden : ''}`}>
+            <button className={styles.btn} onClick={(e) => {
+                setWaypoints([...waypoints, {id:4, lat:5.223132, long:4.555321, alt: 55}])
+                setModalToggle(getToggleModal())}
+            }>Add New Waypoint</button>
+        </div>
+
+    );
 }

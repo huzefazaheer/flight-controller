@@ -1,8 +1,8 @@
 import styles from "./button.module.css"
 
-export default function MenuButton({title}){
+export default function MenuButton({title, onClick}){
 
     return(
-        <button className={styles.menubutton}>{title}</button>
+        <button onClick={onClick} className={styles.menubutton}>{title}</button>
     );
 }

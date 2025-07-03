@@ -6,7 +6,7 @@
 
 .screen{
   flex-basis: 1065px;
-  height: 85vh;
+  height: 88vh;
   background-color: #424242;
   flex-shrink: 2;
 }
@@ -27,7 +27,7 @@
 
 .rightmenu{
   background-color: #424242;
-  height: 85vh;
+  height: 88vh;
   flex-basis: 350px;
   margin-left: 10px;
   flex-shrink: 1;
@@ -40,4 +40,9 @@
   margin-top: 5%;
 }
 
+.img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 /* poisition and vw vs % */

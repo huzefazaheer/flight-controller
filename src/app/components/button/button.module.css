@@ -1,0 +1,11 @@
+.menubutton{
+    background-color: #595858;
+    padding: 10px 20px;
+    color: white;
+    margin: 5px;
+    border: none;
+}
+
+.menubutton:hover{
+    outline: 1px solid white;
+}

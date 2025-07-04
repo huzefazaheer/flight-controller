@@ -4,8 +4,12 @@ import styles from "./waypoint.module.css"
 export default function WaypointManager({waypoints, setWaypoints, coords}){
 
     const [toggleModal, setModalToggle] = useState(false);
+    const [wpId, setWpId] = useState(1);
+    const [waypoint, setWaypoint] = useState({id:wpId, lat:coords.lat, lng: coords.lng});
 
-    console.log(coords)
+    function update(){
+        setWaypoint({...waypoint, id:wpId, lat:coords.lat, lng:coords.lng})
+    }
 
     const tabledata = waypoints.map(wp => {
         return(
@@ -37,17 +41,17 @@ export default function WaypointManager({waypoints, setWaypoints, coords}){
                 </tbody>
                 </table>
             </div>
-            <button className={styles.btn} onClick={() => setModalToggle(!toggleModal)}>Add New Waypoint</button>
+            <button className={styles.btn} onClick={() => {
+                setModalToggle(!toggleModal)
+                update()
+            }}>Add New Waypoint</button>
         </div>
-        <Modal toggleModal={toggleModal} setModalToggle={setModalToggle} waypoints={waypoints} setWaypoints={setWaypoints} coords={coords}></Modal>
+        <Modal toggleModal={toggleModal} setModalToggle={setModalToggle} waypoints={waypoints} setWaypoints={setWaypoints} coords={coords} waypoint={waypoint} setWpId={setWpId} wpId={wpId} setWaypoint={setWaypoint}></Modal>
         </>
     )
 }
 
-function Modal({toggleModal, setModalToggle, waypoints, setWaypoints, coords}){
-
-    const [wpId, setWpId] = useState(1);
-    const [waypoint, setWaypoint] = useState({id:wpId, lat:coords.lat, lng: coords.lng});
+function Modal({toggleModal, setModalToggle, waypoints, setWaypoints, setWpId, wpId, waypoint, setWaypoint}){
 
     function validateInput(){
         console.log(waypoint.lat)
@@ -66,7 +70,6 @@ function Modal({toggleModal, setModalToggle, waypoints, setWaypoints, coords}){
                     setWaypoints([...waypoints, waypoint])
                     setModalToggle(!toggleModal)
                     setWpId(wpId + 1)
-                    setWaypoint({...waypoint, id:wpId+1, lat:coords.lat, lng: coords.lng})
                 }
                 }
             }>Add New Waypoint</button>

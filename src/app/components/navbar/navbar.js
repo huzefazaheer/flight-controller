@@ -6,13 +6,33 @@ import styles from "./navbar.module.css"
 export default function Navbar(){
 
     const [weatherData, setWeatherData] = useState();
+    const [time, setTime] = useState();
 
-    const now = new Date();
-    const time12hr = now.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true // Force 12-hour format
-    });
+    let now = new Date();
+    
+    //How to get accurate time?
+
+    const getTime = useEffect(() => {
+        if(time == undefined){
+            const time12hr = now.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true // Force 12-hour format
+            })
+            setTime(time12hr)
+        }else{
+            now = new Date();
+            const min = setTimeout(() => {
+            const time12hr = now.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true // Force 12-hour format
+        } )
+        setTime(time12hr)
+        }, 30000);
+        }
+        
+    }, [])
 
     const getData = useEffect(async (e) => {
         const response = await fetch("https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/islamabad?unitGroup=us&key=ZSH978YYTT645P7GB7LHBTQHT&contentType=json");
@@ -26,7 +46,7 @@ export default function Navbar(){
             <div className={styles.status} ><img src="./status.svg" alt="" /><span className={styles.statustxt}>Status: Active</span></div>
             <div className={styles.right}>
                 <p className={styles.weather}>{weatherData != undefined ? weatherData.currentConditions.conditions + ", " + ((weatherData.currentConditions.temp - 32) * (5/9)).toFixed(1) + " ºC" : ""}</p>
-                <p className={styles.time}>{time12hr}</p>
+                <p className={styles.time}>{time}</p>
             </div>
         </nav>
     );

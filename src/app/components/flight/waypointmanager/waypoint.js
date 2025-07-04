@@ -54,6 +54,12 @@ function Modal({toggleModal, setModalToggle, waypoints, setWaypoints}){
     const [wpId, setWpId] = useState(1);
     const [waypoint, setWaypoint] = useState({id:wpId});
 
+    function validateInput(){
+        console.log(waypoint.lat)
+        if(waypoint.lat != undefined && waypoint.long != undefined && waypoint.alt != undefined) return true
+        else return false
+    }
+
     return(
         <div className={`${styles.modal} ${!toggleModal ? styles.hidden : ''}`}>
             <div className={styles.innermodal}>
@@ -61,11 +67,12 @@ function Modal({toggleModal, setModalToggle, waypoints, setWaypoints}){
                 <div className={styles.input}><label>Longitude</label><input type="text" value={waypoint.long}  onChange={(e) => {setWaypoint({...waypoint, long:e.target.value})}}></input></div>
                 <div className={styles.input}><label>Altitude</label><input type="text" value={waypoint.alt}  onChange={(e) => {setWaypoint({...waypoint, alt:e.target.value})}}></input></div>
                 <button className={styles.btn} onClick={(e) => {
-                console.log(wpId)
-                setWaypoints([...waypoints, waypoint])
-                setModalToggle(!toggleModal)
-                setWpId(wpId + 1)
-                setWaypoint({...waypoint, id:wpId + 1})
+                if(validateInput()){
+                    setWaypoints([...waypoints, waypoint])
+                    setModalToggle(!toggleModal)
+                    setWpId(wpId + 1)
+                    setWaypoint({...waypoint, id:wpId + 1})
+                }
                 }
             }>Add New Waypoint</button>
             </div>

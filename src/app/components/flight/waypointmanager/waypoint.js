@@ -8,7 +8,7 @@ export default function WaypointManager({waypoints, setWaypoints, coords}){
 
     const tabledata = waypoints.map(wp => {
         return(
-            <tr key={crypto.randomUUID()}>
+            <tr key={wp.id}>
                     <td>{wp.id}</td>
                     <td>{wp.lat}</td>
                     <td>{wp.lng}</td>
@@ -36,10 +36,7 @@ export default function WaypointManager({waypoints, setWaypoints, coords}){
                 </tbody>
                 </table>
             </div>
-            <AltButton title={"Add New Waypoint"} marginTop={"20%"} onClick={ ()=>{
-                setModalToggle(!toggleModal)
-                update()}}
-                ></AltButton>
+            <AltButton title={"Add New Waypoint"} marginTop={"25%"} onClick={ ()=>{setModalToggle(!toggleModal)}} ></AltButton>
         </div>
         <WaypointToast toggleModal={toggleModal} setModalToggle={setModalToggle} waypoints={waypoints} setWaypoints={setWaypoints} coords={coords}></WaypointToast>
         </>
@@ -55,7 +52,7 @@ function WaypointToast({toggleModal, setModalToggle, waypoints, setWaypoints, co
 
     if(prevCoord !== coords){
         setPrevCood(coords)
-        setNewWaypoint({...waypoint, id:wpId, lat:coords.lat, lng: coords.lng})
+        setNewWaypoint({...newWaypoint, id:wpId, lat:coords.lat, lng: coords.lng})
     }
 
     function validateInput(){

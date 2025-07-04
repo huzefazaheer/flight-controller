@@ -66,11 +66,11 @@ function HoverHandler({coords, setCoords, setShowToast, showToast}) {
   });
 
   //Show current coords on hover
-  // return coords && (
-  //   <div className={styles.coorddisplay}>
-  //     Lat: {coords.lat.toFixed(4)}, Lng: {coords.lng.toFixed(4)}
-  //   </div>
-  // );
+  return coords && (
+    <div className={styles.coorddisplay}>
+      {/* Lat: {coords.lat.toFixed(4)}, Lng: {coords.lng.toFixed(4)} */}
+    </div>
+  );
 }
 
 function Toast({coords}){

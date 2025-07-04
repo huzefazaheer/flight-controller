@@ -14,17 +14,14 @@ export default function Home() {
   const [mapMinimised, setMapMinimised] = useState(false);
   const [index, setIndex] = useState(0);
 
-  const map = <Map coords={coords} setCoords={setCoords} waypoints={waypoints} className={styles.img}></Map>
-  const feed = <img className={styles.img} src={"/live-feed.webp"} alt="" />
-
   return (
    <div className={styles.wrapper}>
    <div className={styles.screen}>
     <div className={styles.bigscreen} >
-      {!mapMinimised ? map : feed}
+      {!mapMinimised ? <Map coords={coords} setCoords={setCoords} waypoints={waypoints} className={styles.img}></Map> : <img className={styles.img} src={"/live-feed.webp"} alt="" />}
     </div>
     <div className={styles.smallscreen}>
-      {mapMinimised ? map : feed}
+      {mapMinimised ? <Map coords={coords} setCoords={setCoords} waypoints={waypoints} className={styles.img}></Map> : <img className={styles.img} src={"/live-feed.webp"} alt="" />}
       <div className={styles.controls}>
         <p>{!mapMinimised ? "Live Feed" : "Map"}</p>
         <img src="/maximise.svg" alt="" onClick={(e) => {setMapMinimised(!mapMinimised);}}/>

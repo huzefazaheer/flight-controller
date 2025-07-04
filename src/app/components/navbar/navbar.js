@@ -6,7 +6,7 @@ import styles from "./navbar.module.css"
 export default function Navbar(){
 
     const [weatherData, setWeatherData] = useState();
-    const [time, setTime] = useState();
+    // const [time, setTime] = useState();
 
     let now = new Date();
     const time12hr = now.toLocaleTimeString('en-US', {
@@ -14,7 +14,6 @@ export default function Navbar(){
             minute: '2-digit',
             hour12: true // Force 12-hour format
             })
-    setTime(time12hr)
     
     //How to get accurate time?
 
@@ -35,7 +34,7 @@ export default function Navbar(){
             <div className={styles.status} ><img src="/status.svg" alt="" /><span className={styles.statustxt}>Status: Active</span></div>
             <div className={styles.right}>
                 <p className={styles.weather}>{weatherData != undefined ? weatherData.currentConditions.conditions + ", " + ((weatherData.currentConditions.temp - 32) * (5/9)).toFixed(1) + " ºC" : ""}</p>
-                <p className={styles.time}>{time}</p>
+                <p className={styles.time}>{time12hr}</p>
             </div>
         </nav>
     );

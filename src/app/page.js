@@ -21,10 +21,10 @@ export default function Home() {
    <div className={styles.wrapper}>
    <div className={styles.screen}>
     <div className={styles.bigscreen} >
-      <Map className={styles.img}></Map>
+      {!mapMinimised ? <Map className={styles.img}></Map> : <img className={styles.img} src={"/live-feed.webp"} alt="" />}
     </div>
     <div className={styles.smallscreen}>
-      <img className={styles.img} src={mapMinimised ? "/live-map.png" : "/live-feed.webp"} alt="" />
+      {mapMinimised ? <Map className={styles.img}></Map> : <img className={styles.img} src={"/live-feed.webp"} alt="" />}
       <div className={styles.controls}>
         <p>{!mapMinimised ? "Live Feed" : "Map"}</p>
         <img src="/maximise.svg" alt="" onClick={(e) => {setMapMinimised(toggleMap());}}/>

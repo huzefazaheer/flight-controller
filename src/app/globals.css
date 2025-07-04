@@ -10,3 +10,7 @@ body{
   margin: 0;
 }
 /* ZSH978YYTT645P7GB7LHBTQHT */
+
+.leaflet-control-zoom{
+  display: none;
+}

@@ -16,23 +16,21 @@ L.Icon.Default.mergeOptions({
 
 
 export default function Map({className}){
-    const defaultPosition = [33.6844, 73.0479]; // London coordinates
+    const defaultPosition = [33.6844, 73.0479]; // ISB coordinates
 
   return (
     <MapContainer className={className}
       center={defaultPosition}
       zoom={13}
-      style={{ height: '500px', width: '100%' }}
     >
       {/* ESRI World Imagery Layer */}
       <TileLayer
         url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-        attribution='Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics'
       />
 
       {/* Example Marker */}
       <Marker position={defaultPosition}>
-        <Popup>Hello from ESRI Satellite Imagery!</Popup>
+        <Popup>Intersection </Popup>
       </Marker>
     </MapContainer>
   );

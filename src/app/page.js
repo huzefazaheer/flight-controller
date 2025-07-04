@@ -14,22 +14,20 @@ export default function Home() {
   const [mapMinimised, setMapMinimised] = useState(false);
   const [index, setIndex] = useState(0);
 
-  function toggleMap(){
-    if(mapMinimised) return false;
-    else return true;
-  }
+  const map = <Map coords={coords} setCoords={setCoords} waypoints={waypoints} className={styles.img}></Map>
+  const feed = <img className={styles.img} src={"/live-feed.webp"} alt="" />
 
   return (
    <div className={styles.wrapper}>
    <div className={styles.screen}>
     <div className={styles.bigscreen} >
-      {!mapMinimised ? <Map coords={coords} setCoords={setCoords} waypoints={waypoints} className={styles.img}></Map> : <img className={styles.img} src={"/live-feed.webp"} alt="" />}
+      {!mapMinimised ? map : feed}
     </div>
     <div className={styles.smallscreen}>
-      {mapMinimised ? <Map coords={coords} setCoords={setCoords} waypoints={waypoints} className={styles.img}></Map> : <img className={styles.img} src={"/live-feed.webp"} alt="" />}
+      {mapMinimised ? map : feed}
       <div className={styles.controls}>
         <p>{!mapMinimised ? "Live Feed" : "Map"}</p>
-        <img src="/maximise.svg" alt="" onClick={(e) => {setMapMinimised(toggleMap());}}/>
+        <img src="/maximise.svg" alt="" onClick={(e) => {setMapMinimised(!mapMinimised);}}/>
       </div>
     </div>
    </div>

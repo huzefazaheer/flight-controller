@@ -17,6 +17,9 @@ L.Icon.Default.mergeOptions({
 
 
 export default function Map({waypoints, className, coords, setCoords}){
+
+    const [showToast, setShowToast] = useState(false);
+
     const defaultPosition = [33.6844, 73.0479]; // ISB coordinates
 
     const markers = waypoints.map(waypoint => {
@@ -28,7 +31,8 @@ export default function Map({waypoints, className, coords, setCoords}){
     })
 
   return (
-    <MapContainer className={className} o
+   <div className={styles.map}>
+     <MapContainer className={className} o
       center={defaultPosition}
       zoom={13}
     >
@@ -39,24 +43,41 @@ export default function Map({waypoints, className, coords, setCoords}){
 
       {/* Example Marker */}
       {markers}
-      <HoverHandler coords={coords} setCoords={setCoords}/>   
-
+      <HoverHandler coords={coords} setCoords={setCoords} setShowToast={setShowToast} showToast={showToast}/>   
     </MapContainer>
+    {showToast ? <Toast coords={coords}></Toast> : ""}
+   </div>
   );
 }
 
 
-function HoverHandler({coords, setCoords}) {
+function HoverHandler({coords, setCoords, setShowToast, showToast}) {
 
   useMapEvents({
     mousedown: (e) => {
       setCoords(e.latlng); // Update coordinates on mouse move
+      setShowToast(!showToast)
+    },
+    mouseup: (e) => {
+      setTimeout(()=>{
+        setShowToast(!showToast)
+      }, 2000)
     },
   });
 
   return coords && (
-    <div className="coord-display">
+    <div className={styles.coorddisplay}>
       Lat: {coords.lat.toFixed(4)}, Lng: {coords.lng.toFixed(4)}
     </div>
   );
+}
+
+function Toast({coords}){
+    return(
+        <div className={styles.toast}>
+            <h3>Copied Coordinate</h3>
+            <p>{"Latitude: " +coords.lat}</p>
+            <p>{"Longitude: " +coords.lng}</p>
+        </div>
+    )
 }

@@ -1,0 +1,27 @@
+.toast{
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10000;
+    width: 400px;
+    height: 150px;
+    background-color: white;
+    color: black;
+}
+
+.toast h3{
+    margin-left: 30px;
+}
+
+.toast p{
+    margin-left: 30px;
+}
+
+.map{
+    height: 100% !important;
+}
+
+.coorddisplay{
+    background-color: aqua;
+    z-index: 1000;
+}

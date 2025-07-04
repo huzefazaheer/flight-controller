@@ -1,11 +1,9 @@
 import { use, useState } from "react";
 import styles from "./waypoint.module.css"
 
-export default function WaypointManager(){
+export default function WaypointManager({waypoints, setWaypoints}){
 
     const [toggleModal, setModalToggle] = useState(false);
-
-    const [waypoints, setWaypoints] = useState([]);
 
     function getToggleModal(){
         if(toggleModal) return false;

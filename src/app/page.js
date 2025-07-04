@@ -9,6 +9,8 @@ import Map from "./components/map/map";
 
 export default function Home() {
 
+  const [waypoints, setWaypoints] = useState([]);
+
   const [mapMinimised, setMapMinimised] = useState(false);
   const [index, setIndex] = useState(0);
 
@@ -21,10 +23,10 @@ export default function Home() {
    <div className={styles.wrapper}>
    <div className={styles.screen}>
     <div className={styles.bigscreen} >
-      {!mapMinimised ? <Map className={styles.img}></Map> : <img className={styles.img} src={"/live-feed.webp"} alt="" />}
+      {!mapMinimised ? <Map waypoints={waypoints} className={styles.img}></Map> : <img className={styles.img} src={"/live-feed.webp"} alt="" />}
     </div>
     <div className={styles.smallscreen}>
-      {mapMinimised ? <Map className={styles.img}></Map> : <img className={styles.img} src={"/live-feed.webp"} alt="" />}
+      {mapMinimised ? <Map waypoints={waypoints} className={styles.img}></Map> : <img className={styles.img} src={"/live-feed.webp"} alt="" />}
       <div className={styles.controls}>
         <p>{!mapMinimised ? "Live Feed" : "Map"}</p>
         <img src="/maximise.svg" alt="" onClick={(e) => {setMapMinimised(toggleMap());}}/>
@@ -38,7 +40,7 @@ export default function Home() {
       <MenuButton title="Command Prompt" onClick={() => setIndex(2)}></MenuButton>
       <MenuButton title="Logs" onClick={() => setIndex(3)}></MenuButton>
       </div>
-      {index == 0 ? <FlightData></FlightData> : <WaypointManager></WaypointManager>}
+      {index == 0 ? <FlightData></FlightData> : <WaypointManager waypoints={waypoints} setWaypoints={setWaypoints }></WaypointManager>}
    </div>
    </div>
   );

@@ -15,8 +15,16 @@ L.Icon.Default.mergeOptions({
 });
 
 
-export default function Map({className}){
+export default function Map({waypoints, className}){
     const defaultPosition = [33.6844, 73.0479]; // ISB coordinates
+
+    const markers = waypoints.map(waypoint => {
+        return(
+            <Marker key={waypoint.id} position={[waypoint.lat, waypoint.long]}>
+            <Popup>{waypoint.id}</Popup>
+            </Marker>
+        )
+    })
 
   return (
     <MapContainer className={className}
@@ -29,9 +37,7 @@ export default function Map({className}){
       />
 
       {/* Example Marker */}
-      <Marker position={defaultPosition}>
-        <Popup>Intersection </Popup>
-      </Marker>
+      {markers}
     </MapContainer>
   );
 }

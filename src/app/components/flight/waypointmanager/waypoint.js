@@ -1,21 +1,18 @@
 import { use, useState } from "react";
 import styles from "./waypoint.module.css"
 
-export default function WaypointManager({waypoints, setWaypoints}){
+export default function WaypointManager({waypoints, setWaypoints, coords}){
 
     const [toggleModal, setModalToggle] = useState(false);
 
-    function getToggleModal(){
-        if(toggleModal) return false;
-        else return true;
-    }
+    console.log(coords)
 
     const tabledata = waypoints.map(wp => {
         return(
             <tr key={crypto.randomUUID()}>
                     <td>{wp.id}</td>
                     <td>{wp.lat}</td>
-                    <td>{wp.long}</td>
+                    <td>{wp.lng}</td>
                     <td>{wp.alt}</td>
             </tr>
         );
@@ -31,7 +28,7 @@ export default function WaypointManager({waypoints, setWaypoints}){
                     <tr>
                 <th>ID</th>
                 <th>Lat</th>
-                <th>Long</th>
+                <th>Lng</th>
                 <th>Alt</th>
                 </tr>
                 </thead>
@@ -40,21 +37,21 @@ export default function WaypointManager({waypoints, setWaypoints}){
                 </tbody>
                 </table>
             </div>
-            <button className={styles.btn} onClick={() => setModalToggle(getToggleModal())}>Add New Waypoint</button>
+            <button className={styles.btn} onClick={() => setModalToggle(!toggleModal)}>Add New Waypoint</button>
         </div>
-        <Modal toggleModal={toggleModal} setModalToggle={setModalToggle} waypoints={waypoints} setWaypoints={setWaypoints}></Modal>
+        <Modal toggleModal={toggleModal} setModalToggle={setModalToggle} waypoints={waypoints} setWaypoints={setWaypoints} coords={coords}></Modal>
         </>
     )
 }
 
-function Modal({toggleModal, setModalToggle, waypoints, setWaypoints}){
+function Modal({toggleModal, setModalToggle, waypoints, setWaypoints, coords}){
 
     const [wpId, setWpId] = useState(1);
-    const [waypoint, setWaypoint] = useState({id:wpId});
+    const [waypoint, setWaypoint] = useState({id:wpId, lat:coords.lat, lng: coords.lng});
 
     function validateInput(){
         console.log(waypoint.lat)
-        if(waypoint.lat != undefined && waypoint.long != undefined && waypoint.alt != undefined) return true
+        if(waypoint.lat != undefined && waypoint.lng != undefined && waypoint.alt != undefined) return true
         else return false
     }
 
@@ -62,14 +59,14 @@ function Modal({toggleModal, setModalToggle, waypoints, setWaypoints}){
         <div className={`${styles.modal} ${!toggleModal ? styles.hidden : ''}`}>
             <div className={styles.innermodal}>
                 <div className={styles.input}><label>Latitude</label><input type="text" value={waypoint.lat} onChange={(e) => {setWaypoint({...waypoint, lat:e.target.value})}}></input></div>
-                <div className={styles.input}><label>Longitude</label><input type="text" value={waypoint.long}  onChange={(e) => {setWaypoint({...waypoint, long:e.target.value})}}></input></div>
+                <div className={styles.input}><label>Longitude</label><input type="text" value={waypoint.lng}  onChange={(e) => {setWaypoint({...waypoint, lng:e.target.value})}}></input></div>
                 <div className={styles.input}><label>Altitude</label><input type="text" value={waypoint.alt}  onChange={(e) => {setWaypoint({...waypoint, alt:e.target.value})}}></input></div>
                 <button className={styles.btn} onClick={(e) => {
                 if(validateInput()){
                     setWaypoints([...waypoints, waypoint])
                     setModalToggle(!toggleModal)
                     setWpId(wpId + 1)
-                    setWaypoint({...waypoint, id:wpId + 1})
+                    setWaypoint({...waypoint, id:wpId+1, lat:coords.lat, lng: coords.lng})
                 }
                 }
             }>Add New Waypoint</button>

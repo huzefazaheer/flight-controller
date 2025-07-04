@@ -3,9 +3,10 @@
 
 import styles from "./styles.module.css"
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { useState } from "react";
 
 // Fix Leaflet marker icons (Webpack issue)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -15,19 +16,19 @@ L.Icon.Default.mergeOptions({
 });
 
 
-export default function Map({waypoints, className}){
+export default function Map({waypoints, className, coords, setCoords}){
     const defaultPosition = [33.6844, 73.0479]; // ISB coordinates
 
     const markers = waypoints.map(waypoint => {
         return(
-            <Marker key={waypoint.id} position={[waypoint.lat, waypoint.long]}>
-            <Popup>{waypoint.id}</Popup>
+            <Marker key={waypoint.id} position={[waypoint.lat, waypoint.lng]}>
+            {/* <Popup>{waypoint.id}</Popup> */}
             </Marker>
         )
     })
 
   return (
-    <MapContainer className={className}
+    <MapContainer className={className} o
       center={defaultPosition}
       zoom={13}
     >
@@ -38,6 +39,24 @@ export default function Map({waypoints, className}){
 
       {/* Example Marker */}
       {markers}
+      <HoverHandler coords={coords} setCoords={setCoords}/>   
+
     </MapContainer>
+  );
+}
+
+
+function HoverHandler({coords, setCoords}) {
+
+  useMapEvents({
+    mousedown: (e) => {
+      setCoords(e.latlng); // Update coordinates on mouse move
+    },
+  });
+
+  return coords && (
+    <div className="coord-display">
+      Lat: {coords.lat.toFixed(4)}, Lng: {coords.lng.toFixed(4)}
+    </div>
   );
 }

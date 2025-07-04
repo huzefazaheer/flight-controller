@@ -1,9 +1,9 @@
 import styles from "./button.module.css"
 
-export function MenuButton({title, onClick}){
+export function MenuButton({title, onClick, isActive = false}){
 
     return(
-        <button onClick={onClick} className={styles.menubutton}>{title}</button>
+        <button onClick={onClick} className={`${styles.menubutton} ${isActive ? styles.menubuttonactive : "" }`}>{title}</button>
     );
 }
 

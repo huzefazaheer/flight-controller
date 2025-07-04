@@ -5,6 +5,7 @@ import MenuButton from "./components/button/button";
 import { useState } from "react";
 import FlightData from "./components/flight/flightdata/flightdata";
 import WaypointManager from "./components/flight/waypointmanager/waypoint";
+import Map from "./components/map/map";
 
 export default function Home() {
 
@@ -20,7 +21,7 @@ export default function Home() {
    <div className={styles.wrapper}>
    <div className={styles.screen}>
     <div className={styles.bigscreen} >
-      <img className={styles.img} src={!mapMinimised ? "/live-map.png" : "/live-feed.webp"} alt="" />
+      <Map className={styles.img}></Map>
     </div>
     <div className={styles.smallscreen}>
       <img className={styles.img} src={mapMinimised ? "/live-map.png" : "/live-feed.webp"} alt="" />

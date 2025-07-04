@@ -4,7 +4,6 @@
 }
 
 .waypoint table{
-    /* display: block !important; */
     max-height: 350px;
     width: 100%;
     border-spacing: 0px!important;
@@ -32,15 +31,6 @@
 
 .waypoint tr:nth-child(odd){
     background-color: #2f2f2f00;
-}
-
-.btn{
-    margin-top: 20%;
-    background-color: white;
-    color: black;
-    border: none;
-    padding: 10px 20px;
-    width: 100%;
 }
 
 .tablewrapper{
@@ -95,8 +85,8 @@
     margin-top: 8px;
 }
 
-.innermodal .btn{
-    margin-top: 30%;
-    background-color: white;
-    color: black;
+.errormsg{
+    font-size: 12px;
+    height: 15px;
+    color: rgb(250, 124, 124);
 }

@@ -57,9 +57,10 @@
     width: 365px;
     height: 350px;
     max-height: 350px;
-    background-color: black;
+    background-color: #0c0b18;
     transition: all 1s ease;
     z-index: 100;
+    color: white;
 }
 
 .hidden{
@@ -84,9 +85,9 @@
 .input input{
     padding: 4px 6px;
     margin-top: 2px;
-    background-color: #2f2f2f00;
-    color: white;
-    outline: solid white 1px;
+    background-color: white;
+    color: black;
+    outline: solid black 1px;
     border: none;
 }
 
@@ -96,4 +97,6 @@
 
 .innermodal .btn{
     margin-top: 30%;
+    background-color: white;
+    color: black;
 }

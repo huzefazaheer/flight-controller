@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import styles from "./waypoint.module.css"
 
 export default function WaypointManager({waypoints, setWaypoints, coords}){
@@ -10,6 +10,11 @@ export default function WaypointManager({waypoints, setWaypoints, coords}){
     function update(){
         setWaypoint({...waypoint, id:wpId, lat:coords.lat, lng:coords.lng})
     }
+
+    // Update current waypoint whenever new coords are clicked
+    useEffect(() => {
+        update()
+    }, [coords.lat, coords.lng])
 
     const tabledata = waypoints.map(wp => {
         return(
@@ -52,6 +57,8 @@ export default function WaypointManager({waypoints, setWaypoints, coords}){
 }
 
 function Modal({toggleModal, setModalToggle, waypoints, setWaypoints, setWpId, wpId, waypoint, setWaypoint}){
+
+
 
     function validateInput(){
         console.log(waypoint.lat)

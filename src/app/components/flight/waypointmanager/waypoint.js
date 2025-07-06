@@ -5,11 +5,19 @@ import { AltButton } from "../../button/button";
 export default function WaypointManager({waypoints, setWaypoints, coords}){
 
     const [toggleModal, setModalToggle] = useState(false);
+    const [wpId, setWpId] = useState(1);
+
+    function removeWp(id){
+        setWpId(prevWpId => prevWpId-1)
+        setWaypoints(waypoints.filter(wp => {
+                return wp.id != id
+        }))
+    }
 
     const tabledata = waypoints.map(wp => {
         return(
-            <tr key={wp.id}>
-                    <td>{wp.id}</td>
+            <tr key={wp.id} onClick={(e) => removeWp(wp.id)}>
+                    <td>{wp.no}</td>
                     <td>{wp.lat}</td>
                     <td>{wp.lng}</td>
                     <td>{wp.alt}</td>
@@ -38,21 +46,20 @@ export default function WaypointManager({waypoints, setWaypoints, coords}){
             </div>
             <AltButton title={"Add New Waypoint"} marginTop={"25%"} onClick={ ()=>{setModalToggle(!toggleModal)}} ></AltButton>
         </div>
-        <WaypointToast toggleModal={toggleModal} setModalToggle={setModalToggle} waypoints={waypoints} setWaypoints={setWaypoints} coords={coords}></WaypointToast>
+        <WaypointToast toggleModal={toggleModal} setModalToggle={setModalToggle} waypoints={waypoints} setWaypoints={setWaypoints} coords={coords} setWpId={setWpId}></WaypointToast>
         </>
     )
 }
 
-function WaypointToast({toggleModal, setModalToggle, waypoints, setWaypoints, coords}){
+function WaypointToast({toggleModal, setModalToggle, waypoints, setWaypoints, coords, setWpId}){
 
-    const [wpId, setWpId] = useState(1);
-    const [newWaypoint, setNewWaypoint] = useState({id:wpId, lat:coords.lat, lng: coords.lng});
+    const [newWaypoint, setNewWaypoint] = useState({lat:coords.lat, lng: coords.lng});
     const [prevCoord, setPrevCood] = useState(coords)
     const [errorMsg, setErrorMsg] = useState("")
 
-    if(prevCoord !== coords){
+    if(prevCoord != coords){
         setPrevCood(coords)
-        setNewWaypoint({...newWaypoint, id:wpId, lat:coords.lat, lng: coords.lng})
+        setNewWaypoint({...newWaypoint,lat:coords.lat, lng: coords.lng})
     }
 
     function validateInput(){
@@ -80,9 +87,12 @@ function WaypointToast({toggleModal, setModalToggle, waypoints, setWaypoints, co
                 <p className={styles.errormsg}>{errorMsg}</p>
                 <AltButton title={"Confirm"} marginTop={"25%"} onClick={() => {
                 if(validateInput()){
-                    setWaypoints([...waypoints, newWaypoint])
-                    setModalToggle(!toggleModal)
-                    setWpId(wpId + 1)
+                    setWpId(prevWpId => {
+                    const newId = prevWpId + 1;
+                    setWaypoints([...waypoints, {...newWaypoint, no: prevWpId, id:crypto.randomUUID()}]);
+                    setModalToggle(!toggleModal);
+                    return newId;
+                    });
                 }}}></AltButton>
             </div>
         </div>

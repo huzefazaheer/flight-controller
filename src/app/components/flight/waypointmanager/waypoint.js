@@ -46,12 +46,12 @@ export default function WaypointManager({waypoints, setWaypoints, coords}){
             </div>
             <AltButton title={"Add New Waypoint"} marginTop={"25%"} onClick={ ()=>{setModalToggle(!toggleModal)}} ></AltButton>
         </div>
-        <WaypointToast toggleModal={toggleModal} setModalToggle={setModalToggle} waypoints={waypoints} setWaypoints={setWaypoints} coords={coords} setWpId={setWpId}></WaypointToast>
+        <WaypointToast toggleModal={toggleModal} setModalToggle={setModalToggle} waypoints={waypoints} setWaypoints={setWaypoints} coords={coords} setWpId={setWpId} wpId={wpId}></WaypointToast>
         </>
     )
 }
 
-function WaypointToast({toggleModal, setModalToggle, waypoints, setWaypoints, coords, setWpId}){
+function WaypointToast({toggleModal, setModalToggle, waypoints, setWaypoints, coords, setWpId, wpId}){
 
     const [newWaypoint, setNewWaypoint] = useState({lat:coords.lat, lng: coords.lng});
     const [prevCoord, setPrevCood] = useState(coords)
@@ -87,12 +87,9 @@ function WaypointToast({toggleModal, setModalToggle, waypoints, setWaypoints, co
                 <p className={styles.errormsg}>{errorMsg}</p>
                 <AltButton title={"Confirm"} marginTop={"25%"} onClick={() => {
                 if(validateInput()){
-                    setWpId(prevWpId => {
-                    const newId = prevWpId + 1;
-                    setWaypoints([...waypoints, {...newWaypoint, no: prevWpId, id:crypto.randomUUID()}]);
+                    setWpId(prevId => prevId+1)
+                    setWaypoints([...waypoints, {...newWaypoint, no: wpId+1, id:crypto.randomUUID()}]);
                     setModalToggle(!toggleModal);
-                    return newId;
-                    });
                 }}}></AltButton>
             </div>
         </div>

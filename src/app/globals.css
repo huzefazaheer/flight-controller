@@ -14,3 +14,7 @@ body{
 .leaflet-control-zoom{
   display: none;
 }
+
+.leaflet-marker-icon{
+  height: auto !important;
+}

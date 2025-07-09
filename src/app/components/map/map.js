@@ -19,13 +19,14 @@ L.Icon.Default.mergeOptions({
 export default function Map({waypoints, className, coords, setCoords}){
 
     const [showToast, setShowToast] = useState(false);
+    const [CurrentLocation, setCurrentLocation] = useState({lat:0, lng:1})
 
     const defaultPosition = [33.6844, 73.0479]; // ISB coordinates
 
     const markers = waypoints.map(waypoint => {
         return(
             <Marker key={waypoint.id} position={[waypoint.lat, waypoint.lng]}>
-            {/* <Popup>{waypoint.id}</Popup> */}
+            <Popup>{"WP no:" +waypoint.no}</Popup>
             </Marker>
         )
     })
@@ -43,7 +44,8 @@ export default function Map({waypoints, className, coords, setCoords}){
 
       {/* Example Marker */}
       {markers}
-      <HoverHandler coords={coords} setCoords={setCoords} setShowToast={setShowToast} showToast={showToast}/>   
+      <HoverHandler coords={coords} setCoords={setCoords} setShowToast={setShowToast} showToast={showToast} setCurrentLocation={setCurrentLocation}/>   
+      <GPSLoc CurrentLocation={CurrentLocation}/>
     </MapContainer>
     {showToast ? <Toast coords={coords}></Toast> : ""}
    </div>
@@ -51,17 +53,21 @@ export default function Map({waypoints, className, coords, setCoords}){
 }
 
 
-function HoverHandler({coords, setCoords, setShowToast, showToast}) {
+function HoverHandler({coords, setCoords, setShowToast, showToast, setCurrentLocation}) {
 
   useMapEvents({
-    mousedown: (e) => {
+    contextmenu: (e) => {
       setCoords(e.latlng); // Update coordinates on mouse move
       setShowToast(!showToast)
     },
     mouseup: (e) => {
       setTimeout(()=>{
-        setShowToast(!showToast)
+        setShowToast(false)
       }, 2000)
+    },
+    mousemove: (e) => {
+      setCurrentLocation(e.latlng)
+      console.log(e.latlng)
     },
   });
 
@@ -81,4 +87,13 @@ function Toast({coords}){
             <p>{"Longitude: " +coords.lng}</p>
         </div>
     )
+}
+
+function GPSLoc({CurrentLocation}){
+  return(
+    <div className={styles.currloc}>
+       <p>{"Lat:" + CurrentLocation.lat}</p>
+        <p>{"Lng:" + CurrentLocation.lng}</p>
+    </div>
+  )
 }

@@ -1,6 +1,3 @@
-// components/ESRIMap.jsx
-'use client'; // Mark as Client Component (Next.js 13+)
-
 import styles from "./styles.module.css"
 
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
@@ -67,7 +64,6 @@ function HoverHandler({coords, setCoords, setShowToast, showToast, setCurrentLoc
     },
     mousemove: (e) => {
       setCurrentLocation(e.latlng)
-      console.log(e.latlng)
     },
   });
 

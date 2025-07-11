@@ -46,3 +46,7 @@
 .weather{
     margin-right: 10% !important;
 }
+
+.time{
+    width: 100px;
+}

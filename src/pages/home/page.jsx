@@ -1,11 +1,9 @@
-"use client"
-
 import styles from "./page.module.css";
-import {MenuButton} from "./components/button/button";
+import {MenuButton} from "../../components/button/button";
 import { useState } from "react";
-import FlightData from "./components/flight/flightdata/flightdata";
-import WaypointManager from "./components/flight/waypointmanager/waypoint";
-import Map from "./components/map/map";
+import FlightData from "../../components/flight/flightdata/flightdata";
+import WaypointManager from "../../components/flight/waypointmanager/waypoint";
+import Map from "../../components/map/map";
 
 export default function Home() {
 

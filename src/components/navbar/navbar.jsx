@@ -1,21 +1,28 @@
-"use client"
-
 import { useEffect, useState } from "react";
 import styles from "./navbar.module.css"
 
 export default function Navbar(){
 
     const [weatherData, setWeatherData] = useState();
-    // const [time, setTime] = useState();
 
-    let now = new Date();
-    const time12hr = now.toLocaleTimeString('en-US', {
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: true // Force 12-hour format
-            })
-    
-    //How to get accurate time?
+    const [currentTime, setCurrentTime] = useState(new Date());
+
+    // Update time every second
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+        
+        // Clean up interval on component unmount
+        return () => clearInterval(timer);
+    }, []);
+
+    const time12hr = currentTime.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit', // Added seconds for better accuracy
+        hour12: true
+    });
 
     //Fetch current weather from visual crossing api
     useEffect(() => {

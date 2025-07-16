@@ -12,15 +12,14 @@ export default function Home({fdata}) {
   const [coords, setCoords] = useState({lat:0,lng:0});
   const [mapMinimised, setMapMinimised] = useState(false);
   const [index, setIndex] = useState(0);
-
   return (
    <div className={styles.wrapper}>
    <div className={styles.screen}>
     <div className={styles.bigscreen} >
-      {!mapMinimised ? <Map coords={coords} setCoords={setCoords} waypoints={waypoints} className={styles.img}></Map> : <img className={styles.img} src={"/live-feed.webp"} alt="" />}
+      {!mapMinimised ? <Map coords={coords} setCoords={setCoords} waypoints={waypoints} className={styles.img}></Map> : <img className={styles.img} src={fdata.cameraFeed === null ? "/live-feed.webp" :  fdata.cameraFeed} alt="" />}
     </div>
     <div className={styles.smallscreen}>
-      {mapMinimised ? <Map coords={coords} setCoords={setCoords} waypoints={waypoints} className={styles.img}></Map> : <img className={styles.img} src={"/live-feed.webp"} alt="" />}
+      {mapMinimised ? <Map coords={coords} setCoords={setCoords} waypoints={waypoints} className={styles.img}></Map> : <img className={styles.img} src={fdata.cameraFeed === null ? "/live-feed.webp" : fdata.cameraFeed} alt="" />}
       <div className={styles.controls}>
         <p>{!mapMinimised ? "Live Feed" : "Map"}</p>
         <img src="/maximise.svg" alt="" onClick={() => {setMapMinimised(!mapMinimised);}}/>

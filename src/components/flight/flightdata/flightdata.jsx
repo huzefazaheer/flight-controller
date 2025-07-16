@@ -1,25 +1,25 @@
 import styles from "./flightdata.module.css"
 
-export default function FlightData(){
+export default function FlightData({fdata}){
     return(
         <div className={styles.flightdata}>
             <div className={styles.maindataholder}>
-            <Data col={"#F179C3"} title={"Alt (m)"} data={"0.00"}></Data>
-            <Data col={"#FF990A"} title={"G Speed (km/h)"} data={"0.00"}></Data>
-            <Data col={"#FF4747"} title={"DistToWp (m)"} data={"0.00"}></Data>
-            <Data col={"#EBFF0A"} title={"V Speed (km/h)"} data={"0.00"}></Data>
-            <Data col={"#5ECFFF"} title={"DistToMav"} data={"0.00"}></Data>
-            <Data col={"#4DFF11"} title={"Yaw (deg)"} data={"0.00"}></Data>
+            <Data col={"#F179C3"} title={"Alt (m)"} data={Math.round(fdata.telemetryData.alt * 100) /100 || "N\\A"}></Data>
+            <Data col={"#FF990A"} title={"G Speed (km/h)"} data={Math.round(fdata.telemetryData.gspeed * 100) /100 || "N\\A"}></Data>
+            <Data col={"#FF4747"} title={"DistToWp (m)"} data={Math.round(fdata.telemetryData.disttowp * 100) /100 || "N\\A"}></Data>
+            <Data col={"#EBFF0A"} title={"V Speed (km/h)"} data={Math.round(fdata.telemetryData.vspeed * 100) /100 || "N\\A"}></Data>
+            <Data col={"#5ECFFF"} title={"DistToMav"} data={Math.round(fdata.telemetryData.disttomav * 100) /100 || "N\\A"}></Data>
+            <Data col={"#4DFF11"} title={"Yaw (deg)"} data={Math.round(fdata.telemetryData.yaw * 100) /100 || "N\\A"}></Data>
         </div>
         <div className={styles.pos}>
             <h3>Position</h3>
-            <p className={styles.alttxt}>33° 38' 34.839" N</p>
-            <p className={styles.alttxt}>72° 59' 26.768" E</p>
+            <p className={styles.alttxt}>{fdata.telemetryData.lat} N</p>
+            <p className={styles.alttxt}>{fdata.telemetryData.lng} E</p>
         </div>
         <div className={styles.pos}>
             <h3>Heading</h3>
-            <p className={styles.alttxt}>33° 38' 34.839" N</p>
-            <p className={styles.alttxt}>72° 59' 26.768" E</p>
+            <p className={styles.alttxt}>{fdata.telemetryData.lng} N</p>
+            <p className={styles.alttxt}>{fdata.telemetryData.lng} E</p>
         </div>
         </div>
     )

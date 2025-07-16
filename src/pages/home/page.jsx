@@ -1,11 +1,12 @@
 import styles from "./page.module.css";
 import {MenuButton} from "../../components/button/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FlightData from "../../components/flight/flightdata/flightdata";
 import WaypointManager from "../../components/flight/waypointmanager/waypoint";
 import Map from "../../components/map/map";
+import useRosConnection from "../../script";
 
-export default function Home() {
+export default function Home({fdata}) {
 
   const [waypoints, setWaypoints] = useState([]);
   const [coords, setCoords] = useState({lat:0,lng:0});
@@ -33,7 +34,7 @@ export default function Home() {
       <MenuButton title="Command Prompt" onClick={() => setIndex(2)} isActive={index == 2 ? true : false}></MenuButton>
       <MenuButton title="Logs" onClick={() => setIndex(3)} isActive={index == 3 ? true : false}></MenuButton>
       </div>
-      {index == 0 ? <FlightData></FlightData> : <WaypointManager coords={coords} waypoints={waypoints} setWaypoints={setWaypoints }></WaypointManager>}
+      {index == 0 ? <FlightData fdata={fdata}></FlightData> : <WaypointManager coords={coords} waypoints={waypoints} setWaypoints={setWaypoints }></WaypointManager>}
    </div>
    </div>
   );

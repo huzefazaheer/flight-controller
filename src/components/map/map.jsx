@@ -10,7 +10,7 @@ import {
 } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // Fix Leaflet marker icons (Webpack issue)
 delete L.Icon.Default.prototype._getIconUrl
@@ -28,12 +28,16 @@ export default function Map({
 }) {
   const [showToast, setShowToast] = useState(false)
   const [CurrentLocation, setCurrentLocation] = useState({ lat: 0, lng: 1 })
+  const hasFliedRef = useRef(false)
 
   function MapUpdater({ center }) {
     const map = useMap()
     useEffect(() => {
-      map.flyTo(center, map.getZoom())
-    }, [center])
+      if (hasFliedRef.current == false) {
+        map.flyTo(center, map.getZoom())
+        hasFliedRef.current = true
+      }
+    }, [])
     return null
   }
 

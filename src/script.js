@@ -2,15 +2,17 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import ROSLIB from 'roslib'
 
 const initTel = {
-  lat: 'N\\A',
-  lng: 'N\\A',
-  alt: 'N\\A',
+  lat: 0,
+  lng: 0,
+  alt: 0,
   battery_percentage: 'N\\A',
   timestamp: 'N\\A',
   heading: 'N\\A',
-  gspeed: 'N\\A',
-  vspeed: 'N\\A',
-  yaw: 'N\\A',
+  gspeed: 0,
+  vspeed: 0,
+  yaw: 0,
+  disttowp: 0,
+  etatowp: 0,
 }
 
 const useRosConnection = (url = 'ws://localhost:9090') => {
@@ -22,7 +24,9 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
   const [telemetryData, setTelemetryData] = useState(initTel)
   const [cameraFeed, setCameraFeed] = useState(null)
   const [error, setError] = useState(null)
-
+  const activewpRef = useRef(null)
+  const speedRef = useRef(null)
+  const posRef = useRef([33.6844, 73.0479])
   const rosRef = useRef(null)
   const missionPushClientRef = useRef(null)
   const topicRefs = useRef([])
@@ -91,11 +95,42 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
             name: '/mavros/vfr_hud',
             type: 'mavros_msgs/VFR_HUD',
             callback: (message) => {
+              console.log(activewpRef.current)
+              function calculateDistance(lat1, lon1, lat2, lon2) {
+                // Convert degrees to radians
+                const toRad = (deg) => deg * (Math.PI / 180)
+
+                const R = 6371e3 // Earth radius in meters
+                const φ1 = toRad(lat1)
+                const φ2 = toRad(lat2)
+                const Δφ = toRad(lat2 - lat1)
+                const Δλ = toRad(lon2 - lon1)
+
+                // Haversine formula
+                const a =
+                  Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                  Math.cos(φ1) *
+                    Math.cos(φ2) *
+                    Math.sin(Δλ / 2) *
+                    Math.sin(Δλ / 2)
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+                return R * c // Distance in meters
+              }
+              const distance = calculateDistance(
+                Number(activewpRef.current.x_lat),
+                Number(activewpRef.current.y_long),
+                Number(posRef.current[0]),
+                Number(posRef.current[1]),
+              )
+              const eta = Math.round(distance / message.groundspeed / 60)
+              speedRef.current = message.groundspeed
               setTelemetryData((prev) => ({
                 ...prev,
                 gspeed: message.groundspeed,
                 vspeed: message.climb,
                 yaw: message.heading,
+                disttowp: Math.round(distance / 1000),
+                etatowp: eta,
               }))
             },
           },
@@ -103,6 +138,7 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
             name: '/mavros/global_position/global',
             type: 'sensor_msgs/NavSatFix',
             callback: (message) => {
+              posRef.current = [message.latitude, message.longitude]
               setTelemetryData((prev) => ({
                 ...prev,
                 lat: message.latitude,
@@ -121,6 +157,13 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
           {
             name: '/mavros/mission/waypoints',
             type: 'mavros_msgs/WaypointList',
+            callback: (message) => {
+              activewpRef.current = message.waypoints[message.current_seq]
+            },
+          },
+          {
+            name: '/mavros/mission/reached',
+            type: 'mavros_msgs/WaypointReached',
             callback: (message) => {
               console.log(message)
             },
@@ -174,6 +217,7 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
     error,
     ros: rosRef.current,
     pushWaypoints,
+    posRef,
   }
 }
 

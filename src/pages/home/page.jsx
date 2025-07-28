@@ -20,6 +20,7 @@ export default function Home({ fdata }) {
               setCoords={setCoords}
               waypoints={waypoints}
               className={styles.img}
+              fdata={fdata}
             ></Map>
           ) : (
             <img
@@ -38,6 +39,7 @@ export default function Home({ fdata }) {
               setCoords={setCoords}
               waypoints={waypoints}
               className={styles.img}
+              fdata={fdata}
             ></Map>
           ) : (
             <img

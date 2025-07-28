@@ -26,8 +26,8 @@ export default function FlightData({ fdata }) {
         ></Data>
         <Data
           col={'#5ECFFF'}
-          title={'DistToMav'}
-          data={Math.round(fdata.telemetryData.disttomav * 100) / 100 || 0}
+          title={'ETA To WP (min)'}
+          data={fdata.telemetryData.etatowp || '∞'}
         ></Data>
         <Data
           col={'#4DFF11'}

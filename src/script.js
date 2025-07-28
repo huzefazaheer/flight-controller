@@ -1,110 +1,180 @@
-import { useState, useEffect, useRef } from 'react';
-import ROSLIB from 'roslib';
+import { useState, useEffect, useRef, useCallback } from 'react'
+import ROSLIB from 'roslib'
 
 const initTel = {
-        lat: "N\\A",
-        lng:" N\\A",
-        alt: "N\\A",
-        battery_percentage: "N\\A",
-        timestamp: "N\\A",
-        heading_lat: "N\\A",
-        heading_lng: "N\\A",
-    }
+  lat: 'N\\A',
+  lng: 'N\\A',
+  alt: 'N\\A',
+  battery_percentage: 'N\\A',
+  timestamp: 'N\\A',
+  heading: 'N\\A',
+  gspeed: 'N\\A',
+  vspeed: 'N\\A',
+  yaw: 'N\\A',
+}
 
 const useRosConnection = (url = 'ws://localhost:9090') => {
-    const [isConnected, setIsConnected] = useState(false);
-    const [statusData, setStatusData] = useState({
-        status: "Disconnected",
-        bat: 0.00,
-    })
-    const [telemetryData, setTelemetryData] = useState(initTel);
-    const [cameraFeed, setCameraFeed] = useState(null);
-    const [error, setError] = useState(null);
+  const [isConnected, setIsConnected] = useState(false)
+  const [statusData, setStatusData] = useState({
+    status: 'Disconnected',
+    bat: 0.0,
+  })
+  const [telemetryData, setTelemetryData] = useState(initTel)
+  const [cameraFeed, setCameraFeed] = useState(null)
+  const [error, setError] = useState(null)
 
-    // Use useRef to hold the ROSLIB.Ros instance so it persists across renders
-    // and doesn't trigger re-creation of the ROS object unnecessarily.
-    const rosRef = useRef(null); 
+  const rosRef = useRef(null)
+  const missionPushClientRef = useRef(null)
+  const topicRefs = useRef([])
 
-    useEffect(() => {
-        // Initialize ROS connection only once when the component mounts
-        if (!rosRef.current) {
-            rosRef.current = new ROSLIB.Ros({
-                url: url
-            });
+  const pushWaypoints = useCallback(async (waypoints) => {
+    if (!missionPushClientRef.current || waypoints.length === 0) {
+      console.error('Service not ready or no waypoints')
+      return { success: false, error: 'Service not ready or no waypoints' }
+    }
 
-            rosRef.current.on('connection', () => {
-                console.log('Connected to rosbridge_server.');
-                setIsConnected(true);
-                setError(null); // Clear any previous errors
+    const rosWaypoints = waypoints.map((wp, index) => ({
+      frame: wp.frame || 3, // MAV_FRAME_GLOBAL
+      command: wp.command || 16, // MAV_CMD_NAV_WAYPOINT
+      is_current: index === 0,
+      autocontinue: wp.autocontinue !== false,
+      param1: wp.param1 || 0,
+      param2: wp.param2 || 0,
+      param3: wp.param3 || 0,
+      param4: wp.param4 || 0,
+      x_lat: parseFloat(wp.lat),
+      y_long: parseFloat(wp.lng),
+      z_alt: parseFloat(wp.alt),
+    }))
 
-                // --- Subscribe to status topic ---
-                const statusListener = new ROSLIB.Topic({
-                    ros: rosRef.current,
-                    name: '/sim/status',
-                    messageType: 'std_msgs/Float64' // Matches your simulator's dummy type
-                });
+    const request = new ROSLIB.ServiceRequest({ waypoints: rosWaypoints })
 
-                statusListener.subscribe(function(message) {
-                    // Update React state with incoming status data
-                    setStatusData(message);
-                });
+    try {
+      const result = await missionPushClientRef.current.callService(request)
+      const success = result?.success ?? true
+      const count = result?.wp_transfered ?? waypoints.length
 
-                // --- Subscribe to telemetry topic ---
-                const telemetryListener = new ROSLIB.Topic({
-                    ros: rosRef.current,
-                    name: '/sim/telemetry',
-                    messageType: 'std_msgs/Float64' // Matches your simulator's dummy type
-                });
+      if (success) {
+        console.log(`Successfully pushed ${count} waypoints`)
+        return { success: true, count }
+      } else {
+        console.warn('Waypoint push reported failure', result)
+        return { success: false, error: 'Service reported failure' }
+      }
+    } catch (err) {
+      console.error('Service call failed:', err)
+      return { success: false, error: err.message }
+    }
+  }, [])
 
-                telemetryListener.subscribe(function(message) {
-                    // Update React state with incoming telemetry data
-                    setTelemetryData(message);
-                });
+  useEffect(() => {
+    if (!rosRef.current) {
+      rosRef.current = new ROSLIB.Ros({ url })
 
-                // --- Subscribe to camera feed topic ---
-                const cameraListener = new ROSLIB.Topic({
-                    ros: rosRef.current,
-                    name: '/sim/camera_feed/compressed',
-                    messageType: 'sensor_msgs/CompressedImage'
-                });
+      // Initialize service client when connection is established
+      const onConnection = () => {
+        console.log('Connected to rosbridge_server.')
+        setIsConnected(true)
+        setError(null)
+        setStatusData((prev) => ({ ...prev, status: 'Active' }))
 
-                cameraListener.subscribe(function(message) {
-                    // Update React state with incoming camera data (base64)
-                    const imageData = "data:image/jpeg;base64," + message.data;
-                    setCameraFeed(imageData);
-                });
-            });
+        // Initialize mission push service
+        missionPushClientRef.current = new ROSLIB.Service({
+          ros: rosRef.current,
+          name: '/mavros/mission/push', // Changed to standard MAVROS service name
+          serviceType: 'mavros_msgs/WaypointPush',
+        })
 
-            rosRef.current.on('error', (err) => {
-                console.error('Error connecting to rosbridge_server:', err);
-                setIsConnected(false);
-                setError(err);
-            });
+        // Setup topics
+        const topics = [
+          {
+            name: '/mavros/vfr_hud',
+            type: 'mavros_msgs/VFR_HUD',
+            callback: (message) => {
+              setTelemetryData((prev) => ({
+                ...prev,
+                gspeed: message.groundspeed,
+                vspeed: message.climb,
+                yaw: message.heading,
+              }))
+            },
+          },
+          {
+            name: '/mavros/global_position/global',
+            type: 'sensor_msgs/NavSatFix',
+            callback: (message) => {
+              setTelemetryData((prev) => ({
+                ...prev,
+                lat: message.latitude,
+                lng: message.longitude,
+                alt: message.altitude,
+              }))
+            },
+          },
+          {
+            name: '/webcam/image_raw/compressed',
+            type: 'sensor_msgs/CompressedImage',
+            callback: (message) => {
+              setCameraFeed('data:image/jpeg;base64,' + message.data)
+            },
+          },
+          {
+            name: '/mavros/mission/waypoints',
+            type: 'mavros_msgs/WaypointList',
+            callback: (message) => {
+              console.log(message)
+            },
+          },
+        ]
 
-            rosRef.current.on('close', () => {
-                console.log('Disconnected from rosbridge_server.');
-                setIsConnected(false);
-                setTelemetryData(initTel); // Clear data on disconnect
-                setCameraFeed(null);
-                setStatusData({
-                    status: "Disconnected",
-                    bat: 0.00,
-                })
-                console.log(telemetryData)
-                // You might add reconnection logic here if desired
-            });
-        }
+        // Store topic references for cleanup
+        topicRefs.current = topics.map((topicConfig) => {
+          const topic = new ROSLIB.Topic({
+            ros: rosRef.current,
+            name: topicConfig.name,
+            messageType: topicConfig.type,
+          })
+          topic.subscribe(topicConfig.callback)
+          return topic
+        })
+      }
 
-        // Cleanup function: Close ROS connection when component unmounts
-        return () => {
-            if (rosRef.current && rosRef.current.isConnected) {
-                console.log('Closing ROS connection on unmount.');
-                rosRef.current.close();
-            }
-        };
-    }, [url]); // Re-run effect if URL changes (though usually fixed for rosbridge)
+      rosRef.current.on('connection', onConnection)
+      rosRef.current.on('error', (err) => {
+        console.error('Error connecting to rosbridge_server:', err)
+        setIsConnected(false)
+        setError(err)
+      })
+      rosRef.current.on('close', () => {
+        console.log('Disconnected from rosbridge_server.')
+        setIsConnected(false)
+        setTelemetryData(initTel)
+        setCameraFeed(null)
+        setStatusData({ status: 'Disconnected', bat: 0.0 })
+      })
+    }
 
-    return { isConnected, statusData, telemetryData, cameraFeed, error, ros: rosRef.current };
-};
+    return () => {
+      // Unsubscribe from all topics
+      topicRefs.current.forEach((topic) => topic.unsubscribe())
+      topicRefs.current = []
 
-export default useRosConnection;
+      // Close ROS connection
+      if (rosRef.current && rosRef.current.isConnected) {
+        rosRef.current.close()
+      }
+    }
+  }, [url])
+
+  return {
+    isConnected,
+    statusData,
+    telemetryData,
+    cameraFeed,
+    error,
+    ros: rosRef.current,
+    pushWaypoints,
+  }
+}
+
+export default useRosConnection

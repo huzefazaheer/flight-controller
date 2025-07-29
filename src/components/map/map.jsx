@@ -40,13 +40,16 @@ export default function Map({
     const map = useMap()
     useEffect(() => {
       if (hasFliedRef.current == false) {
-        setTimeout(() => {
-          map.flyTo(center, map.getZoom())
-          hasFliedRef.current = true
+        async function a() {
+          await setTimeout(() => {
+            map.flyTo(center, map.getZoom())
+            hasFliedRef.current = true
+          })
           markerRef.current = L.marker(center, {
             icon: positionMarkerIcon,
           }).addTo(map)
-        }, 2000)
+        }
+        a()
       }
       if (markerRef.current != null) {
         console.log(markerRef.current.setLatLng(center))

@@ -88,7 +88,7 @@ export default function Map({
         />
         <GPSLoc CurrentLocation={CurrentLocation} />
       </MapContainer>
-      {showToast ? <Toast coords={coords}></Toast> : ''}
+      <Toast coords={coords} showToast={showToast}></Toast>
     </div>
   )
 }
@@ -125,9 +125,9 @@ function HoverHandler({
   )
 }
 
-function Toast({ coords }) {
+function Toast({ coords, showToast }) {
   return (
-    <div className={styles.toast}>
+    <div className={`${styles.toast} ${showToast ? '' : styles.hidden}`}>
       <h3>Copied Coordinate</h3>
       <p>{'Latitude: ' + coords.lat}</p>
       <p>{'Longitude: ' + coords.lng}</p>

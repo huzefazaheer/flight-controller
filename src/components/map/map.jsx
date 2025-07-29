@@ -40,19 +40,16 @@ export default function Map({
     const map = useMap()
     useEffect(() => {
       if (hasFliedRef.current == false) {
-        async function a() {
-          await setTimeout(() => {
-            map.flyTo(center, map.getZoom())
-            hasFliedRef.current = true
-          })
+        if (fdata.posRef.current != null) {
+          map.flyTo(center, map.getZoom())
+          hasFliedRef.current = true
           markerRef.current = L.marker(center, {
             icon: positionMarkerIcon,
           }).addTo(map)
         }
-        a()
       }
       if (markerRef.current != null) {
-        console.log(markerRef.current.setLatLng(center))
+        markerRef.current.setLatLng(center)
       }
     }, [center])
     return null
@@ -66,16 +63,23 @@ export default function Map({
     )
   })
 
+  //[33.6844, 73.0479]
   return (
     <div className={styles.map}>
       <MapContainer
         className={className}
         o
-        center={[fdata.posRef.current[0], fdata.posRef.current[1]]}
+        center={[
+          fdata.posRef?.current?.[0] || 33.6844,
+          fdata.posRef?.current?.[1] || 73.0479,
+        ]}
         zoom={13}
       >
         <MapUpdater
-          center={[fdata.posRef.current[0], fdata.posRef.current[1]]}
+          center={[
+            fdata.posRef?.current?.[0] || 33.6844,
+            fdata.posRef?.current?.[1] || 73.0479,
+          ]}
         />
         {/* ESRI World Imagery Layer */}
         <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" />

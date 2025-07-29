@@ -26,7 +26,7 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
   const [error, setError] = useState(null)
   const activewpRef = useRef(null)
   const speedRef = useRef(null)
-  const posRef = useRef([33.6844, 73.0479])
+  const posRef = useRef(null)
   const rosRef = useRef(null)
   const missionPushClientRef = useRef(null)
   const topicRefs = useRef([])
@@ -95,7 +95,6 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
             name: '/mavros/vfr_hud',
             type: 'mavros_msgs/VFR_HUD',
             callback: (message) => {
-              console.log(activewpRef.current)
               function calculateDistance(lat1, lon1, lat2, lon2) {
                 // Convert degrees to radians
                 const toRad = (deg) => deg * (Math.PI / 180)

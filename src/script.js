@@ -321,17 +321,23 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
                 return R * c // Distance in meters
               }
               const distance = calculateDistance(
-                Number(activewpRef.current.x_lat),
-                Number(activewpRef.current.y_long),
+                Number(activewpRef?.current?.x_lat || 0),
+                Number(activewpRef?.current?.y_long || 0),
                 Number(posRef.current[0]),
                 Number(posRef.current[1]),
               )
               const eta = Math.round(distance / message.groundspeed)
               let displayEta =
-                eta > 200 ? Math.round(eta / 60) : Math.round(eta)
+                eta > 200000
+                  ? '∞'
+                  : eta > 200
+                  ? Math.round(eta / 60)
+                  : Math.round(eta)
               speedRef.current = message.groundspeed
               let displayDistance =
-                distance < 1000
+                distance > 10000
+                  ? 'none'
+                  : distance > 1000
                   ? Math.round(distance)
                   : Math.round(distance / 1000)
               setTelemetryData((prev) => ({
@@ -409,7 +415,8 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
             name: '/mavros/statustext/recv',
             type: 'mavros_msgs/StatusText',
             callback: (message) => {
-              setLogData([...logData, message])
+              console.log(message)
+              setLogData((prev) => [...prev, message.text])
             },
           },
         ]

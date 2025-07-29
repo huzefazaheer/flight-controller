@@ -5,6 +5,7 @@ import FlightData from '../../components/flight/flightdata/flightdata'
 import WaypointManager from '../../components/flight/waypointmanager/waypoint'
 import Map from '../../components/map/map'
 import ActionWindow from '../../components/flight/actionwindow/actionwindow'
+import LogData from '../../components/flight/logdata/logdata'
 
 export default function Home({ fdata }) {
   const [waypoints, setWaypoints] = useState([])
@@ -95,8 +96,10 @@ export default function Home({ fdata }) {
             setWaypoints={setWaypoints}
             fdata={fdata}
           ></WaypointManager>
-        ) : (
+        ) : index == 2 ? (
           <ActionWindow fdata={fdata}></ActionWindow>
+        ) : (
+          <LogData fdata={fdata}></LogData>
         )}
       </div>
     </div>

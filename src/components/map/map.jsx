@@ -29,22 +29,36 @@ export default function Map({
   const [showToast, setShowToast] = useState(false)
   const [CurrentLocation, setCurrentLocation] = useState({ lat: 0, lng: 1 })
   const hasFliedRef = useRef(false)
+  const markerRef = useRef(null)
+
+  const positionMarkerIcon = L.icon({
+    iconUrl: 'currentlocation.svg',
+    iconSize: [24, 24],
+  })
 
   function MapUpdater({ center }) {
     const map = useMap()
     useEffect(() => {
       if (hasFliedRef.current == false) {
-        map.flyTo(center, map.getZoom())
-        hasFliedRef.current = true
+        setTimeout(() => {
+          map.flyTo(center, map.getZoom())
+          hasFliedRef.current = true
+          markerRef.current = L.marker(center, {
+            icon: positionMarkerIcon,
+          }).addTo(map)
+        }, 2000)
       }
-    }, [])
+      if (markerRef.current != null) {
+        console.log(markerRef.current.setLatLng(center))
+      }
+    }, [center])
     return null
   }
 
-  const markers = waypoints.map((waypoint) => {
+  const markers = waypoints.map((waypoint, index) => {
     return (
       <Marker key={waypoint.id} position={[waypoint.lat, waypoint.lng]}>
-        <Popup>{'WP no:' + waypoint.no}</Popup>
+        <Popup>{'WP no:' + index + 1}</Popup>
       </Marker>
     )
   })

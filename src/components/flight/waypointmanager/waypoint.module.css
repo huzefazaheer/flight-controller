@@ -91,3 +91,29 @@
   height: 15px;
   color: rgb(250, 124, 124);
 }
+
+.toast {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 10000;
+  width: 400px;
+  height: 150px;
+  background-color: #1a191f;
+  color: white;
+  margin-top: 10px;
+  margin-right: 10px;
+  transition: all 500ms ease-out;
+}
+
+.toast h3 {
+  margin-left: 30px;
+}
+
+.toast p {
+  margin-left: 30px;
+}
+
+.hidden {
+  transform: translateX(3000px);
+}

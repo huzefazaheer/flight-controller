@@ -9,6 +9,7 @@ export default function WaypointManager({
   coords,
   fdata,
 }) {
+  const [showToast, setShowToast] = useState(false)
   const [toggleModal, setModalToggle] = useState(false)
   const [wpId, setWpId] = useState(1)
 
@@ -51,7 +52,13 @@ export default function WaypointManager({
         <AltButton
           marginTop={'5%'}
           title={'Push Waypoints'}
-          onClick={() => fdata.pushWaypoints(waypoints)}
+          onClick={() => {
+            fdata.pushWaypoints(waypoints)
+            setShowToast(true)
+            setTimeout(() => {
+              setShowToast(false)
+            }, 1500)
+          }}
         />
       </div>
       <WaypointToast
@@ -63,7 +70,21 @@ export default function WaypointManager({
         setWpId={setWpId}
         wpId={wpId}
       />
+      <Toast
+        message={'Waypoints pushed successfully'}
+        showToast={showToast}
+      ></Toast>
     </>
+  )
+}
+
+function Toast({ message, showToast }) {
+  return (
+    <div className={`${styles.toast} ${showToast ? '' : styles.hidden}`}>
+      <h3>{message}</h3>
+      <p>Sent to current mission</p>
+      {/* <p>{'Longitude: ' + coords.lng}</p> */}
+    </div>
   )
 }
 

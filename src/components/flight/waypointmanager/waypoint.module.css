@@ -54,7 +54,7 @@
   margin-right: 10px;
 }
 
-.hidden {
+.modalhidden {
   transform: translateY(100%);
 }
 
@@ -114,6 +114,6 @@
   margin-left: 30px;
 }
 
-.hidden {
+.toasthidden {
   transform: translateX(3000px);
 }

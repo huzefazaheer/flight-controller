@@ -18,10 +18,11 @@ export default function ActionWindow({ fdata }) {
           }}
         ></AltButton>
         <AltButton
-          title={'Arm'}
+          title={'Start Mission'}
           marginTop={'6%'}
-          onClick={() => {
-            console.log('clicked')
+          onClick={async () => {
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+            await fdata.startMission()
           }}
         ></AltButton>
         <AltButton

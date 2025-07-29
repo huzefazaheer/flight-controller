@@ -34,6 +34,7 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
   const armingClientRef = useRef(null)
   const setModeClientRef = useRef(null)
   const landClientRef = useRef(null)
+  const wpRef = useRef(null)
 
   // Helper function to set mode
   const setMode = useCallback(async (mode = 'GUIDED') => {
@@ -156,25 +157,55 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
     }
   }, [telemetryData.alt])
 
+  const clearMission = async () => {
+    const clearClient = new ROSLIB.Service({
+      ros: rosRef.current,
+      name: '/mavros/mission/clear',
+      serviceType: 'mavros_msgs/WaypointClear',
+    })
+
+    const request = new ROSLIB.ServiceRequest({})
+    await clearClient.callService(request)
+  }
+
   const pushWaypoints = useCallback(async (waypoints) => {
     if (!missionPushClientRef.current || waypoints.length === 0) {
       console.error('Service not ready or no waypoints')
       return { success: false, error: 'Service not ready or no waypoints' }
     }
+    const takeoffWp = {
+      frame: 3, // MAV_FRAME_GLOBAL
+      command: 22, // MAV_CMD_NAV_TAKEOFF (MAVLink command for takeoff)
+      is_current: true, // This will be the first and current waypoint
+      autocontinue: true,
+      param1: 0, // Minimum pitch (usually 0 for multirotors)
+      param2: 0, // Empty
+      param3: 0, // Empty
+      param4: 0, // Yaw (0 for no specific yaw during takeoff)
+      x_lat: parseFloat(waypoints[0].lat), // Takeoff at current latitude
+      y_long: parseFloat(waypoints[0].lng), // Takeoff at current longitude
+      z_alt: 10, // Target takeoff altitude
+    }
+    await clearMission()
+    wpRef.current = waypoints
+    const rosWaypoints = [
+      takeoffWp,
+      ...waypoints.map((wp, index) => ({
+        frame: wp.frame || 3, // MAV_FRAME_GLOBAL
+        command: wp.command || 16, // MAV_CMD_NAV_WAYPOINT
+        is_current: index === 0, // First waypoint in reversed list is current
+        autocontinue: wp.autocontinue !== false,
+        param1: 2.0,
+        param2: wp.param2 || 0,
+        param3: wp.param3 || 0,
+        param4: wp.param4 || 0,
+        x_lat: parseFloat(wp.lat),
+        y_long: parseFloat(wp.lng),
+        z_alt: parseFloat(wp.alt),
+      })),
+    ]
 
-    const rosWaypoints = waypoints.map((wp, index) => ({
-      frame: wp.frame || 3, // MAV_FRAME_GLOBAL
-      command: wp.command || 16, // MAV_CMD_NAV_WAYPOINT
-      is_current: index === 0,
-      autocontinue: wp.autocontinue !== false,
-      param1: wp.param1 || 0,
-      param2: wp.param2 || 0,
-      param3: wp.param3 || 0,
-      param4: wp.param4 || 0,
-      x_lat: parseFloat(wp.lat),
-      y_long: parseFloat(wp.lng),
-      z_alt: parseFloat(wp.alt),
-    }))
+    console.log(rosWaypoints)
 
     const request = new ROSLIB.ServiceRequest({ waypoints: rosWaypoints })
 
@@ -195,6 +226,25 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
       return { success: false, error: err.message }
     }
   }, [])
+
+  const startMission = useCallback(async () => {
+    if (!setModeClientRef.current) {
+      return { success: false, error: 'ROS service not connected' }
+    }
+    await setMode('AUTO')
+    await setCurrentWaypoint(0)
+  }, [])
+
+  const setCurrentWaypoint = async (index = 0) => {
+    const setCurrentClient = new ROSLIB.Service({
+      ros: rosRef.current,
+      name: '/mavros/mission/set_current',
+      serviceType: 'mavros_msgs/WaypointSetCurrent',
+    })
+
+    const request = new ROSLIB.ServiceRequest({ wp_seq: index })
+    await setCurrentClient.callService(request)
+  }
 
   useEffect(() => {
     if (!rosRef.current) {
@@ -274,12 +324,16 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
               )
               const eta = Math.round(distance / message.groundspeed / 60)
               speedRef.current = message.groundspeed
+              let displayDistance =
+                distance < 1000
+                  ? Math.round(distance)
+                  : Math.round(distance / 1000)
               setTelemetryData((prev) => ({
                 ...prev,
                 gspeed: message.groundspeed,
                 vspeed: message.climb,
                 yaw: message.heading,
-                disttowp: Math.round(distance / 1000),
+                disttowp: displayDistance,
                 etatowp: eta,
               }))
             },
@@ -308,14 +362,20 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
             name: '/mavros/mission/waypoints',
             type: 'mavros_msgs/WaypointList',
             callback: (message) => {
-              activewpRef.current = message.waypoints[message.current_seq]
+              console.log('All Wps', message.waypoints)
+              activewpRef.current = message.waypoints.find(
+                (wp) => wp.is_current,
+              )
             },
           },
           {
             name: '/mavros/mission/reached',
             type: 'mavros_msgs/WaypointReached',
             callback: (message) => {
-              console.log(message)
+              console.log('Reached', message)
+              if (message.wp_seq === wpRef.length - 1) {
+                setCurrentWaypoint(0)
+              }
             },
           },
         ]
@@ -370,6 +430,7 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
     posRef,
     takeoff,
     land,
+    startMission,
   }
 }
 

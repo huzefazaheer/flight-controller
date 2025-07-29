@@ -80,7 +80,7 @@ export default function WaypointManager({
 
 function Toast({ message, showToast }) {
   return (
-    <div className={`${styles.toast} ${showToast ? '' : styles.hidden}`}>
+    <div className={`${styles.toast} ${showToast ? '' : styles.toasthidden}`}>
       <h3>{message}</h3>
       <p>Sent to current mission</p>
       {/* <p>{'Longitude: ' + coords.lng}</p> */}
@@ -126,7 +126,9 @@ function WaypointToast({
   }
 
   return (
-    <div className={`${styles.modal} ${!toggleModal ? styles.hidden : ''}`}>
+    <div
+      className={`${styles.modal} ${!toggleModal ? styles.modalhidden : ''}`}
+    >
       <div className={styles.innermodal}>
         <div className={styles.input}>
           <label>Latitude</label>

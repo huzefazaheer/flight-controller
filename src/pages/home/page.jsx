@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import FlightData from '../../components/flight/flightdata/flightdata'
 import WaypointManager from '../../components/flight/waypointmanager/waypoint'
 import Map from '../../components/map/map'
+import ActionWindow from '../../components/flight/actionwindow/actionwindow'
 
 export default function Home({ fdata }) {
   const [waypoints, setWaypoints] = useState([])
@@ -75,7 +76,7 @@ export default function Home({ fdata }) {
             isActive={index == 1 ? true : false}
           ></MenuButton>
           <MenuButton
-            title="Command Prompt"
+            title="Action Window"
             onClick={() => setIndex(2)}
             isActive={index == 2 ? true : false}
           ></MenuButton>
@@ -87,13 +88,15 @@ export default function Home({ fdata }) {
         </div>
         {index == 0 ? (
           <FlightData fdata={fdata}></FlightData>
-        ) : (
+        ) : index == 1 ? (
           <WaypointManager
             coords={coords}
             waypoints={waypoints}
             setWaypoints={setWaypoints}
             fdata={fdata}
           ></WaypointManager>
+        ) : (
+          <ActionWindow fdata={fdata}></ActionWindow>
         )}
       </div>
     </div>

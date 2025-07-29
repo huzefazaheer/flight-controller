@@ -30,6 +30,131 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
   const rosRef = useRef(null)
   const missionPushClientRef = useRef(null)
   const topicRefs = useRef([])
+  const takeoffClientRef = useRef(null)
+  const armingClientRef = useRef(null)
+  const setModeClientRef = useRef(null)
+  const landClientRef = useRef(null)
+
+  // Helper function to set mode
+  const setMode = useCallback(async (mode = 'GUIDED') => {
+    if (!setModeClientRef.current) {
+      return { success: false, error: 'SetMode service not ready' }
+    }
+
+    try {
+      const request = new ROSLIB.ServiceRequest({
+        custom_mode: mode,
+      })
+      const response = await setModeClientRef.current.callService(request)
+      return {
+        success: response?.mode_sent || false,
+        message: response?.message || 'No response message',
+      }
+    } catch (err) {
+      return { success: false, error: err.message }
+    }
+  }, [])
+
+  const arm = useCallback(async (shouldArm = true) => {
+    if (!armingClientRef.current) {
+      return { success: false, error: 'Arming service not ready' }
+    }
+
+    try {
+      const request = new ROSLIB.ServiceRequest({
+        value: shouldArm,
+      })
+      const response = await armingClientRef.current.callService(request)
+      return {
+        success: response?.success || false,
+        message: response?.message || 'No response message',
+      }
+    } catch (err) {
+      return { success: false, error: err.message }
+    }
+  }, [])
+
+  const takeoff = useCallback(
+    async (altitude = 10) => {
+      if (!takeoffClientRef.current) {
+        return { success: false, error: 'Takeoff service not ready' }
+      }
+      await setMode('GUIDED')
+      await arm(true)
+
+      // 3. Send takeoff command
+      try {
+        const request = new ROSLIB.ServiceRequest({
+          min_pitch: 0, // Usually 0 for multirotors
+          yaw: 0, // Heading (radians)
+          latitude: 0, // Ignored in GUIDED mode
+          longitude: 0, // Ignored in GUIDED mode
+          altitude: altitude, // Takeoff altitude (meters)
+        })
+
+        const response = await takeoffClientRef.current.callService(request)
+
+        if (response?.success) {
+          return { success: true, message: 'Takeoff command accepted' }
+        } else {
+          return {
+            success: false,
+            error: response?.message || 'Takeoff failed with no error message',
+          }
+        }
+      } catch (err) {
+        return { success: false, error: err.message }
+      }
+    },
+    [setMode, arm],
+  )
+
+  const land = useCallback(async () => {
+    if (!landClientRef.current) {
+      return { success: false, error: 'Landing service not ready' }
+    }
+
+    try {
+      const request = new ROSLIB.ServiceRequest({
+        altitude: 0, // Land at current position
+        latitude: 0, // Ignored when landing at current position
+        longitude: 0, // Ignored when landing at current position
+        min_pitch: 0, // Usually 0 for multirotors
+        yaw: 0, // Maintain current heading
+      })
+
+      const response = await landClientRef.current.callService(request)
+
+      if (response?.success) {
+        // Verify landing by monitoring altitude
+        return new Promise((resolve) => {
+          // const startAlt = telemetryData.alt
+          const checkInterval = setInterval(() => {
+            if (telemetryData.alt < 0.5) {
+              // Consider landed below 0.5m
+              clearInterval(checkInterval)
+              resolve({ success: true, message: 'Landed successfully' })
+            }
+          }, 1000)
+
+          // Timeout after 60 seconds
+          setTimeout(() => {
+            clearInterval(checkInterval)
+            resolve({
+              success: false,
+              error: `Landing verification timeout. Current alt: ${telemetryData.alt}m`,
+            })
+          }, 60000)
+        })
+      }
+      return {
+        success: false,
+        error: response?.message || 'Land command rejected',
+      }
+    } catch (err) {
+      return { success: false, error: err.message }
+    }
+  }, [telemetryData.alt])
 
   const pushWaypoints = useCallback(async (waypoints) => {
     if (!missionPushClientRef.current || waypoints.length === 0) {
@@ -82,11 +207,37 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
         setError(null)
         setStatusData((prev) => ({ ...prev, status: 'Active' }))
 
+        // Initialize landing service
+        landClientRef.current = new ROSLIB.Service({
+          ros: rosRef.current,
+          name: '/mavros/cmd/land',
+          messageType: 'mavros_msgs/CommandTOL',
+        })
+
         // Initialize mission push service
         missionPushClientRef.current = new ROSLIB.Service({
           ros: rosRef.current,
           name: '/mavros/mission/push', // Changed to standard MAVROS service name
           serviceType: 'mavros_msgs/WaypointPush',
+        })
+
+        // Initialize services
+        takeoffClientRef.current = new ROSLIB.Service({
+          ros: rosRef.current,
+          name: '/mavros/cmd/takeoff',
+          serviceType: 'mavros_msgs/CommandTOL',
+        })
+
+        armingClientRef.current = new ROSLIB.Service({
+          ros: rosRef.current,
+          name: '/mavros/cmd/arming',
+          serviceType: 'mavros_msgs/CommandBool',
+        })
+
+        setModeClientRef.current = new ROSLIB.Service({
+          ros: rosRef.current,
+          name: '/mavros/set_mode',
+          serviceType: 'mavros_msgs/SetMode',
         })
 
         // Setup topics
@@ -217,6 +368,8 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
     ros: rosRef.current,
     pushWaypoints,
     posRef,
+    takeoff,
+    land,
   }
 }
 

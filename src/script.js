@@ -17,9 +17,13 @@ const initTel = {
 
 const useRosConnection = (url = 'ws://localhost:9090') => {
   const [isConnected, setIsConnected] = useState(false)
+  const [logData, setLogData] = useState([])
   const [statusData, setStatusData] = useState({
     status: 'Disconnected',
-    bat: 0.0,
+    armed: 'false',
+    mode: 'false',
+    guided: 'false',
+    maual_input: 'none',
   })
   const [telemetryData, setTelemetryData] = useState(initTel)
   const [cameraFeed, setCameraFeed] = useState(null)
@@ -322,7 +326,9 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
                 Number(posRef.current[0]),
                 Number(posRef.current[1]),
               )
-              const eta = Math.round(distance / message.groundspeed / 60)
+              const eta = Math.round(distance / message.groundspeed)
+              let displayEta =
+                eta > 200 ? Math.round(eta / 60) : Math.round(eta)
               speedRef.current = message.groundspeed
               let displayDistance =
                 distance < 1000
@@ -334,7 +340,7 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
                 vspeed: message.climb,
                 yaw: message.heading,
                 disttowp: displayDistance,
-                etatowp: eta,
+                etatowp: displayEta,
               }))
             },
           },
@@ -347,7 +353,16 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
                 ...prev,
                 lat: message.latitude,
                 lng: message.longitude,
-                alt: message.altitude,
+              }))
+            },
+          },
+          {
+            name: '/mavros/global_position/rel_alt',
+            type: 'std_msgs/Float64',
+            callback: (message) => {
+              setTelemetryData((prev) => ({
+                ...prev,
+                alt: message.data,
               }))
             },
           },
@@ -362,7 +377,6 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
             name: '/mavros/mission/waypoints',
             type: 'mavros_msgs/WaypointList',
             callback: (message) => {
-              console.log('All Wps', message.waypoints)
               activewpRef.current = message.waypoints.find(
                 (wp) => wp.is_current,
               )
@@ -376,6 +390,26 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
               if (message.wp_seq === wpRef.length - 1) {
                 setCurrentWaypoint(0)
               }
+            },
+          },
+          {
+            name: '/mavros/state',
+            type: 'mavros_msgs/State',
+            callback: (message) => {
+              setStatusData({
+                status: message.connected ? 'Active' : 'Disconnected',
+                armed: message.armed ? 'True' : 'False',
+                mode: message.mode,
+                guided: message.guided ? 'True' : 'False',
+                manual_input: message.manual_input ? 'True' : 'False',
+              })
+            },
+          },
+          {
+            name: '/mavros/statustext/recv',
+            type: 'mavros_msgs/StatusText',
+            callback: (message) => {
+              setLogData([...logData, message])
             },
           },
         ]
@@ -431,6 +465,9 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
     takeoff,
     land,
     startMission,
+    wpRef,
+    setLogData,
+    logData,
   }
 }
 

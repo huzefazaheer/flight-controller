@@ -16,7 +16,7 @@ export default function FlightData({ fdata }) {
         ></Data>
         <Data
           col={'#FF4747'}
-          title={'DistToWp (m)'}
+          title={'DistToWp (km\\m)'}
           data={Math.round(fdata.telemetryData.disttowp * 100) / 100 || 0}
         ></Data>
         <Data
@@ -26,7 +26,7 @@ export default function FlightData({ fdata }) {
         ></Data>
         <Data
           col={'#5ECFFF'}
-          title={'ETA To WP (min)'}
+          title={'ETA To WP (min\\s)'}
           data={fdata.telemetryData.etatowp || '∞'}
         ></Data>
         <Data

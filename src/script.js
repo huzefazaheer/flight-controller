@@ -39,6 +39,7 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
   const setModeClientRef = useRef(null)
   const landClientRef = useRef(null)
   const wpRef = useRef(null)
+  const patrolRef = useRef(false)
 
   // Helper function to set mode
   const setMode = useCallback(async (mode = 'GUIDED') => {
@@ -235,20 +236,38 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
     if (!setModeClientRef.current) {
       return { success: false, error: 'ROS service not connected' }
     }
+    await setMode('GUIDED')
     await setMode('AUTO')
-    await setCurrentWaypoint(0)
   }, [])
 
-  const setCurrentWaypoint = async (index = 0) => {
-    const setCurrentClient = new ROSLIB.Service({
-      ros: rosRef.current,
-      name: '/mavros/mission/set_current',
-      serviceType: 'mavros_msgs/WaypointSetCurrent',
-    })
+  const setCurrentWaypoint = useCallback(async (index = 0) => {
+    try {
+      if (!rosRef.current?.isConnected) {
+        throw new Error('ROS connection not established')
+      }
 
-    const request = new ROSLIB.ServiceRequest({ wp_seq: index })
-    await setCurrentClient.callService(request)
-  }
+      const setCurrentClient = new ROSLIB.Service({
+        ros: rosRef.current,
+        name: '/mavros/mission/set_current',
+        serviceType: 'mavros_msgs/WaypointSetCurrent',
+      })
+
+      const request = new ROSLIB.ServiceRequest({ wp_seq: index })
+      const response = await setCurrentClient.callService(request)
+
+      return {
+        success: response?.success ?? false,
+        message: response?.message || 'No response message',
+      }
+    } catch (err) {
+      console.error('Waypoint set error:', err)
+      return {
+        success: false,
+        error: err.message,
+        message: `Failed to set waypoint: ${err.message}`,
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (!rosRef.current) {
@@ -391,10 +410,18 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
           {
             name: '/mavros/mission/reached',
             type: 'mavros_msgs/WaypointReached',
-            callback: (message) => {
-              console.log('Reached', message)
-              if (message.wp_seq === wpRef.length - 1) {
-                setCurrentWaypoint(0)
+            callback: async (message) => {
+              if (message.wp_seq == wpRef.current.length) {
+                if (patrolRef?.current == true) {
+                  await setCurrentWaypoint(0)
+
+                  setTimeout(async () => {
+                    await setMode('GUIDED')
+                    setTimeout(async () => {
+                      await setMode('AUTO')
+                    }, 1000)
+                  }, 1000)
+                }
               }
             },
           },
@@ -475,6 +502,7 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
     wpRef,
     setLogData,
     logData,
+    patrolRef,
   }
 }
 

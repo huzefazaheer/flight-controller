@@ -33,16 +33,15 @@ export default function ActionWindow({ fdata, displayToast }) {
           }}
         ></AltButton>
         <AltButton
-          title={'Dump Logs'}
           marginTop={'6%'}
+          title={'Use Patrol'}
           onClick={() => {
-            displayToast('Dev Debug', 'Logs dumped to console')
-            console.log('========Status=========')
-            console.log(fdata.statusData)
-            console.log('========Waypoints=========')
-            console.log(fdata.wpRef.current)
-            console.log('========Active Waypoint=========')
-            console.log(fdata.activewpRef.current)
+            fdata.patrolRef.current = !fdata.patrolRef.current
+            displayToast(
+              'Ardupilot',
+              'Patrol Mode Set',
+              'Mode: ' + fdata.patrolRef.current,
+            )
           }}
         ></AltButton>
       </div>
@@ -57,11 +56,30 @@ export default function ActionWindow({ fdata, displayToast }) {
         ></Data>
       </div>
       <h3 className={styles.subhead}>Waypoints</h3>
-      <div className={styles.sidedataholder}>
+      <div className={styles.maindataholder}>
         <Data
-          title={'Number'}
+          title={'Wp Count'}
           data={fdata.wpRef?.current?.length || '0'}
         ></Data>
+        <Data
+          title={'Patrol Mode'}
+          data={(fdata.patrolRef?.current ? 'True' : 'False') || 'False'}
+        ></Data>
+      </div>
+      <div className={styles.btnbottom}>
+        <AltButton
+          title={'Dump Waypoint Logs'}
+          marginTop={'20%'}
+          onClick={() => {
+            displayToast('Dev Debug', 'Logs dumped to console')
+            console.log('========Status=========')
+            console.log(fdata.statusData)
+            console.log('========Waypoints=========')
+            console.log(fdata.wpRef.current)
+            console.log('========Active Waypoint=========')
+            console.log(fdata.activewpRef.current)
+          }}
+        ></AltButton>
       </div>
     </div>
   )

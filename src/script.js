@@ -40,6 +40,7 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
   const landClientRef = useRef(null)
   const wpRef = useRef(null)
   const patrolRef = useRef(false)
+  const visitedWp = useRef([])
 
   // Helper function to set mode
   const setMode = useCallback(async (mode = 'GUIDED') => {
@@ -411,7 +412,10 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
             name: '/mavros/mission/reached',
             type: 'mavros_msgs/WaypointReached',
             callback: async (message) => {
+              visitedWp.current.push(wpRef.current[message.wp_seq - 1])
+
               if (message.wp_seq == wpRef.current.length) {
+                visitedWp.current = []
                 if (patrolRef?.current == true) {
                   await setCurrentWaypoint(0)
 
@@ -503,6 +507,7 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
     setLogData,
     logData,
     patrolRef,
+    visitedWp,
   }
 }
 

@@ -54,6 +54,32 @@ export default function Map({
     if (markerRef.current != null && prevCenterRef.current != center) {
       markerRef.current.setLatLng(center)
       prevCenterRef.current = center
+      let latlng
+      if (fdata.visitedWp.current.length > 0) {
+        latlng = [
+          center,
+          ...waypoints
+            .filter(
+              (wp) =>
+                !fdata.visitedWp.current.some(
+                  (visited) => visited.lat === wp.lat && visited.lng === wp.lng,
+                ),
+            )
+            .map((wp) => [wp.lat, wp.lng]),
+        ]
+      } else {
+        latlng = [
+          center,
+          ...waypoints.map((wp) => {
+            return [wp.lat, wp.lng]
+          }),
+        ]
+      }
+      if (lineRef.current == null) {
+        lineRef.current = L.polyline(latlng, { color: 'yellow' }).addTo(map)
+      } else {
+        lineRef.current.setLatLngs(latlng)
+      }
     }
 
     return null

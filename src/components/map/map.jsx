@@ -11,7 +11,6 @@ import {
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { useEffect, useRef, useState } from 'react'
-import useToast from '../toast/toggleToast'
 
 // Fix Leaflet marker icons (Webpack issue)
 delete L.Icon.Default.prototype._getIconUrl
@@ -31,6 +30,8 @@ export default function Map({
   const [CurrentLocation, setCurrentLocation] = useState({ lat: 0, lng: 1 })
   const hasFliedRef = useRef(false)
   const markerRef = useRef(null)
+  const prevCenterRef = useRef(null)
+  const lineRef = useRef(null)
 
   const positionMarkerIcon = L.icon({
     iconUrl: 'currentlocation.svg',
@@ -39,20 +40,22 @@ export default function Map({
 
   function MapUpdater({ center }) {
     const map = useMap()
-    useEffect(() => {
-      if (hasFliedRef.current == false) {
-        if (fdata.posRef.current != null) {
-          map.flyTo(center, map.getZoom())
-          hasFliedRef.current = true
-          markerRef.current = L.marker(center, {
-            icon: positionMarkerIcon,
-          }).addTo(map)
-        }
+
+    if (hasFliedRef.current == false) {
+      if (fdata.posRef.current != null) {
+        map.flyTo(center, map.getZoom())
+        hasFliedRef.current = true
+        markerRef.current = L.marker(center, {
+          icon: positionMarkerIcon,
+        }).addTo(map)
+        prevCenterRef.current = center
       }
-      if (markerRef.current != null) {
-        markerRef.current.setLatLng(center)
-      }
-    }, [center])
+    }
+    if (markerRef.current != null && prevCenterRef.current != center) {
+      markerRef.current.setLatLng(center)
+      prevCenterRef.current = center
+    }
+
     return null
   }
 

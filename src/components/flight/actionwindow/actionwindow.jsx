@@ -1,7 +1,7 @@
 import { AltButton } from '../../button/button'
 import styles from './actionwindow.module.css'
 
-export default function ActionWindow({ fdata }) {
+export default function ActionWindow({ fdata, displayToast }) {
   return (
     <div className={styles.flightdata}>
       <div className={styles.maindataholder}>
@@ -9,12 +9,18 @@ export default function ActionWindow({ fdata }) {
           title={'Takeoff'}
           onClick={async () => {
             await fdata.takeoff(5)
+            displayToast(
+              'Ardupilot',
+              'Take off sequence initiated',
+              'Altitude: 5',
+            )
           }}
         ></AltButton>
         <AltButton
           title={'Land'}
           onClick={async () => {
             await fdata.land()
+            displayToast('Ardupilot', 'Land sequence initiated')
           }}
         ></AltButton>
         <AltButton
@@ -23,12 +29,14 @@ export default function ActionWindow({ fdata }) {
           onClick={async () => {
             await new Promise((resolve) => setTimeout(resolve, 1000))
             await fdata.startMission()
+            displayToast('Ardupilot', 'Mission started', 'Attempting takeoff')
           }}
         ></AltButton>
         <AltButton
-          title={'Button'}
+          title={'Dump Logs'}
           marginTop={'6%'}
           onClick={() => {
+            displayToast('Dev Debug', 'Logs dumped to console')
             console.log('========Status=========')
             console.log(fdata.statusData)
             console.log('========Waypoints=========')

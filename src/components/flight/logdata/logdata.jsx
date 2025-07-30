@@ -1,7 +1,7 @@
 import { AltButton } from '../../button/button'
 import styles from './logdata.module.css'
 
-export default function LogData({ fdata }) {
+export default function LogData({ fdata, displayToast }) {
   const data = fdata.logData.map((data) => {
     return (
       <p className={styles.log} key={crypto.randomUUID()}>
@@ -18,6 +18,7 @@ export default function LogData({ fdata }) {
         marginTop={'20px'}
         onClick={() => {
           fdata.setLogData([])
+          displayToast('Logs', 'Cleared Logs')
         }}
       ></AltButton>
     </div>

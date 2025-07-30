@@ -11,6 +11,7 @@ import {
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { useEffect, useRef, useState } from 'react'
+import useToast from '../toast/toggleToast'
 
 // Fix Leaflet marker icons (Webpack issue)
 delete L.Icon.Default.prototype._getIconUrl
@@ -25,8 +26,8 @@ export default function Map({
   coords,
   setCoords,
   fdata,
+  displayToast,
 }) {
-  const [showToast, setShowToast] = useState(false)
   const [CurrentLocation, setCurrentLocation] = useState({ lat: 0, lng: 1 })
   const hasFliedRef = useRef(false)
   const markerRef = useRef(null)
@@ -89,34 +90,26 @@ export default function Map({
         <HoverHandler
           coords={coords}
           setCoords={setCoords}
-          setShowToast={setShowToast}
-          showToast={showToast}
           setCurrentLocation={setCurrentLocation}
+          displayToast={displayToast}
         />
         <GPSLoc CurrentLocation={CurrentLocation} />
       </MapContainer>
-      <Toast coords={coords} showToast={showToast}></Toast>
     </div>
   )
 }
 
-function HoverHandler({
-  coords,
-  setCoords,
-  setShowToast,
-  showToast,
-  setCurrentLocation,
-}) {
+function HoverHandler({ coords, setCoords, setCurrentLocation, displayToast }) {
   useMapEvents({
     contextmenu: (e) => {
       setCoords(e.latlng) // Update coordinates on mouse move
-      setShowToast(!showToast)
+      displayToast(
+        'Copied Coordinate',
+        'Latitude: ' + coords.lat,
+        'Longitude: ' + coords.lng,
+      )
     },
-    mouseup: (e) => {
-      setTimeout(() => {
-        setShowToast(false)
-      }, 2000)
-    },
+
     mousemove: (e) => {
       setCurrentLocation(e.latlng)
     },
@@ -129,16 +122,6 @@ function HoverHandler({
         {/* Lat: {coords.lat.toFixed(4)}, Lng: {coords.lng.toFixed(4)} */}
       </div>
     )
-  )
-}
-
-function Toast({ coords, showToast }) {
-  return (
-    <div className={`${styles.toast} ${showToast ? '' : styles.hidden}`}>
-      <h3>Copied Coordinate</h3>
-      <p>{'Latitude: ' + coords.lat}</p>
-      <p>{'Longitude: ' + coords.lng}</p>
-    </div>
   )
 }
 

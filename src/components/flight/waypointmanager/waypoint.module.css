@@ -74,7 +74,7 @@
 }
 
 .input input {
-  padding: 4px 6px;
+  padding: 6px 6px;
   margin-top: 2px;
   background-color: white;
   color: black;
@@ -92,28 +92,23 @@
   color: rgb(250, 124, 124);
 }
 
-.toast {
-  position: fixed;
+.exit {
+  position: absolute;
   top: 0;
   right: 0;
-  z-index: 10000;
-  width: 400px;
-  height: 150px;
-  background-color: #1a191f;
-  color: white;
-  margin-top: 10px;
-  margin-right: 10px;
-  transition: all 500ms ease-out;
+  padding: 2px;
+  margin: 0;
+  width: 32px;
+  height: 32px;
 }
 
-.toast h3 {
-  margin-left: 30px;
+.exit:hover {
+  background-color: rgb(183, 37, 37);
 }
 
-.toast p {
-  margin-left: 30px;
-}
-
-.toasthidden {
-  transform: translateX(3000px);
+.exit img {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin: 0;
 }

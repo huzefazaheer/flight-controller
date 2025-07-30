@@ -335,9 +335,9 @@ const useRosConnection = (url = 'ws://localhost:9090') => {
                   : Math.round(eta)
               speedRef.current = message.groundspeed
               let displayDistance =
-                distance > 10000
+                distance / 1000 > 10000
                   ? 'none'
-                  : distance > 1000
+                  : distance < 1000
                   ? Math.round(distance)
                   : Math.round(distance / 1000)
               setTelemetryData((prev) => ({

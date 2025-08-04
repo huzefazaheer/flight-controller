@@ -1,15 +1,18 @@
 import styles from './page.module.css'
 import { MenuButton } from '../../components/button/button'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import FlightData from '../../components/flight/flightdata/flightdata'
 import WaypointManager from '../../components/flight/waypointmanager/waypoint'
 import Map from '../../components/map/map'
+import ActionWindow from '../../components/flight/actionwindow/actionwindow'
+import LogData from '../../components/flight/logdata/logdata'
 
-export default function Home({ fdata }) {
+export default function Home({ fdata, displayToast }) {
   const [waypoints, setWaypoints] = useState([])
   const [coords, setCoords] = useState({ lat: 0, lng: 0 })
   const [mapMinimised, setMapMinimised] = useState(false)
   const [index, setIndex] = useState(0)
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.screen}>
@@ -21,6 +24,7 @@ export default function Home({ fdata }) {
               waypoints={waypoints}
               className={styles.img}
               fdata={fdata}
+              displayToast={displayToast}
             ></Map>
           ) : (
             <img
@@ -40,6 +44,7 @@ export default function Home({ fdata }) {
               waypoints={waypoints}
               className={styles.img}
               fdata={fdata}
+              displayToast={displayToast}
             ></Map>
           ) : (
             <img
@@ -75,7 +80,7 @@ export default function Home({ fdata }) {
             isActive={index == 1 ? true : false}
           ></MenuButton>
           <MenuButton
-            title="Command Prompt"
+            title="Action Window"
             onClick={() => setIndex(2)}
             isActive={index == 2 ? true : false}
           ></MenuButton>
@@ -87,13 +92,21 @@ export default function Home({ fdata }) {
         </div>
         {index == 0 ? (
           <FlightData fdata={fdata}></FlightData>
-        ) : (
+        ) : index == 1 ? (
           <WaypointManager
             coords={coords}
             waypoints={waypoints}
             setWaypoints={setWaypoints}
             fdata={fdata}
+            displayToast={displayToast}
           ></WaypointManager>
+        ) : index == 2 ? (
+          <ActionWindow
+            fdata={fdata}
+            displayToast={displayToast}
+          ></ActionWindow>
+        ) : (
+          <LogData fdata={fdata} displayToast={displayToast}></LogData>
         )}
       </div>
     </div>

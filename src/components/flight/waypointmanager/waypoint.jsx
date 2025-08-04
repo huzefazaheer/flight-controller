@@ -1,13 +1,13 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import styles from './waypoint.module.css'
 import { AltButton } from '../../button/button'
-import ROSLIB from 'roslib'
 
 export default function WaypointManager({
   waypoints,
   setWaypoints,
   coords,
   fdata,
+  displayToast,
 }) {
   const [toggleModal, setModalToggle] = useState(false)
   const [wpId, setWpId] = useState(1)
@@ -51,10 +51,17 @@ export default function WaypointManager({
         <AltButton
           marginTop={'5%'}
           title={'Push Waypoints'}
-          onClick={() => fdata.pushWaypoints(waypoints)}
+          onClick={() => {
+            fdata.pushWaypoints(waypoints)
+            displayToast(
+              'Waypoints pushed successfully',
+              'Sent to current mission',
+              waypoints.length + ' waypoint(s)',
+            )
+          }}
         />
       </div>
-      <WaypointToast
+      <WaypointModal
         toggleModal={toggleModal}
         setModalToggle={setModalToggle}
         waypoints={waypoints}
@@ -62,12 +69,13 @@ export default function WaypointManager({
         coords={coords}
         setWpId={setWpId}
         wpId={wpId}
+        setShowModal={setModalToggle}
       />
     </>
   )
 }
 
-function WaypointToast({
+function WaypointModal({
   toggleModal,
   setModalToggle,
   waypoints,
@@ -75,6 +83,7 @@ function WaypointToast({
   coords,
   setWpId,
   wpId,
+  setShowModal,
 }) {
   const [newWaypoint, setNewWaypoint] = useState({
     lat: coords.lat,
@@ -90,13 +99,13 @@ function WaypointToast({
 
   function validateInput() {
     if (newWaypoint.lat == undefined || newWaypoint.lat == '') {
-      setErrorMsg('Please enter valid lat')
+      setErrorMsg('Please enter valid latitude')
       return false
     } else if (newWaypoint.lng == undefined || newWaypoint.lng == '') {
-      setErrorMsg('Please enter valid lng')
+      setErrorMsg('Please enter valid longitude')
       return false
     } else if (newWaypoint.alt == undefined || newWaypoint.alt == '') {
-      setErrorMsg('Please enter valid alt')
+      setErrorMsg('Please enter valid altitude')
       return false
     } else {
       setErrorMsg('')
@@ -105,9 +114,12 @@ function WaypointToast({
   }
 
   return (
-    <div className={`${styles.modal} ${!toggleModal ? styles.hidden : ''}`}>
+    <div
+      className={`${styles.modal} ${!toggleModal ? styles.modalhidden : ''}`}
+    >
       <div className={styles.innermodal}>
         <div className={styles.input}>
+          <h3>Add Waypoint</h3>
           <label>Latitude</label>
           <input
             type="text"
@@ -140,7 +152,7 @@ function WaypointToast({
         <p className={styles.errormsg}>{errorMsg}</p>
         <AltButton
           title={'Confirm'}
-          marginTop={'25%'}
+          marginTop={'1%'}
           onClick={() => {
             if (validateInput()) {
               setWpId((prevId) => prevId + 1)
@@ -152,6 +164,9 @@ function WaypointToast({
             }
           }}
         ></AltButton>
+      </div>
+      <div className={styles.exit} onClick={() => setShowModal(false)}>
+        <img src="cross.svg" alt="" />
       </div>
     </div>
   )

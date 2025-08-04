@@ -1,45 +1,30 @@
-.toast{
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 10000;
-    width: 400px;
-    height: 150px;
-    background-color: #0c0b18;
-    color: white;
+.map {
+  height: 100% !important;
 }
 
-.toast h3{
-    margin-left: 30px;
+.coorddisplay {
+  background-color: aqua;
+  z-index: 1000;
 }
 
-.toast p{
-    margin-left: 30px;
+.currloc {
+  position: relative;
+  background-color: rgba(64, 64, 64, 0.708);
+  color: white;
+  z-index: 1000;
+  margin-right: 70%;
+  bottom: -95%;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
 }
 
-.map{
-    height: 100% !important;
+.currloc p {
+  margin: 0;
+  padding: 10px 5px;
+  width: 150px;
 }
 
-.coorddisplay{
-    background-color: aqua;
-    z-index: 1000;
-}
-
-.currloc{
-    position: relative;
-    background-color: rgba(64, 64, 64, 0.708);
-    color: white;
-    z-index: 1000;
-    margin-right: 70%;
-    bottom: -95%;
-    display: flex;
-    flex-direction: row;
-    gap: 12px;
-}
-
-.currloc p{
-    margin: 0;
-    padding: 10px 5px;
-    width: 150px;
+.hidden {
+  transform: translateX(3000px);
 }

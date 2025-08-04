@@ -1,92 +1,114 @@
-.waypoint{
-    margin-left: 6%;
-    margin-right: 6%;
+.waypoint {
+  margin-left: 6%;
+  margin-right: 6%;
 }
 
-.waypoint table{
-    max-height: 350px;
-    width: 100%;
-    border-spacing: 0px!important;
-    overflow-y: auto;
+.waypoint table {
+  max-height: 350px;
+  width: 100%;
+  border-spacing: 0px !important;
+  overflow-y: auto;
 }
 
-.waypoint th{
-    font-weight: 400;
-    text-align: left;
-    padding-left: 10px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    background-color: #2F2F2F;
+.waypoint th {
+  font-weight: 400;
+  text-align: left;
+  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: #2f2f2f;
 }
 
-.waypoint td{
-    padding: 10px;
-    color: rgb(209, 209, 209);
-    font-size: 14px;
+.waypoint td {
+  padding: 10px;
+  color: rgb(209, 209, 209);
+  font-size: 14px;
 }
 
-.waypoint tr:nth-child(even){
-    background-color: #606060;
+.waypoint tr:nth-child(even) {
+  background-color: #606060;
 }
 
-.waypoint tr:nth-child(odd){
-    background-color: #2f2f2f00;
+.waypoint tr:nth-child(odd) {
+  background-color: #2f2f2f00;
 }
 
-.tablewrapper{
-    display: block;
-    height: 350px;
-    max-height: 350px;
-    overflow-y: auto;
+.tablewrapper {
+  display: block;
+  height: 350px;
+  max-height: 350px;
+  overflow-y: auto;
 }
 
-.modal{
-    position: absolute;
-    bottom: 0px;
-    right: 0;
-    width: 365px;
-    height: 350px;
-    max-height: 350px;
-    background-color: #0c0b18;
-    transition: all 1s ease;
-    z-index: 100;
-    color: white;
+.modal {
+  position: fixed;
+  bottom: 0px;
+  right: 0;
+  width: 365px;
+  height: 350px;
+  max-height: 350px;
+  background-color: #1a191f;
+  transition: all 1s ease;
+  z-index: 100;
+  color: white;
+  margin-right: 10px;
 }
 
-.hidden{
-    transform: translateY(100%);
+.modalhidden {
+  transform: translateY(100%);
 }
 
-.innermodal{
-    max-height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    padding: 10px 30px;
-    overflow: hidden;
+.innermodal {
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 10px 30px;
+  overflow: hidden;
 }
 
-.input{
-    margin-top: 3px;
-    display: flex;
-    flex-direction: column;
+.input {
+  margin-top: 3px;
+  display: flex;
+  flex-direction: column;
 }
 
-.input input{
-    padding: 4px 6px;
-    margin-top: 2px;
-    background-color: white;
-    color: black;
-    outline: solid black 1px;
-    border: none;
+.input input {
+  padding: 6px 6px;
+  margin-top: 2px;
+  background-color: white;
+  color: black;
+  outline: solid black 1px;
+  border: none;
 }
 
-.input label{
-    margin-top: 8px;
+.input label {
+  margin-top: 8px;
 }
 
-.errormsg{
-    font-size: 12px;
-    height: 15px;
-    color: rgb(250, 124, 124);
+.errormsg {
+  font-size: 12px;
+  height: 15px;
+  color: rgb(250, 124, 124);
+}
+
+.exit {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 2px;
+  margin: 0;
+  width: 32px;
+  height: 32px;
+}
+
+.exit:hover {
+  background-color: rgb(183, 37, 37);
+}
+
+.exit img {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin: 0;
 }

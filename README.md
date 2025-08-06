@@ -15,14 +15,12 @@ A flight controller program to control drones using ardupilot.
 
 ### Modules
 
-- Flight Information: Displays important updates like velocit, altitude and distance to wp
+- Flight Information: Displays important updates like velocity, altitude and distance to wp
 - Waypoint Manager: Control adding and removing of waypoints with an interactive map
 - Action Window: Send control signal to ardupilot for functions such as taking off, landing, controlling mission e.t.c
 - Logs Window: Displays mavros status messages for debugging faults
 
 #### Startup Commands for Gazebo Sim
-
-To specify that a code block is Bash in Markdown, use **`bash`** after the backticks (\`\`\`) at the beginning of the code block. This is called a "language identifier" and it enables syntax highlighting for that specific language.
 
 ```bash
 roslaunch iq_sim runway.launch
